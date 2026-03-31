@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SpinLux – Roue de la chance premium. Belle, fluide, ultra personnalisable.">
+  <title>SpinLux – Roue de la Chance Premium</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Tailwind config (extend with our vars) -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: '#C9A84C',
+            'gold-light': '#F0D98C',
+            'gold-dark': '#8A6914',
+            'bg-deep': '#08080F',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
+  <header class="header">
+    <div class="header__brand">
+      <span class="header__logo">SpinLux</span>
+      <span class="header__tagline" data-i18n="tagline">Roue de la Chance Premium</span>
+    </div>
+
+    <div class="header__actions">
+      <!-- Sound -->
+      <button id="sound-btn" class="icon-btn active" title="Son activé">🔊</button>
+
+      <!-- Fullscreen -->
+      <button id="fullscreen-btn" class="icon-btn" title="Plein écran" data-i18n-title="fullscreen">⛶</button>
+
+      <!-- Language selector -->
+      <div class="lang-selector">
+        <button class="lang-btn active" data-lang="fr" title="Français">🇫🇷</button>
+        <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
+        <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ MAIN LAYOUT ══════════════════════════════════════════ -->
+  <div class="main-layout">
+
+    <!-- ── LEFT PANEL ─────────────────────────────────────────── -->
+    <aside class="panel panel--left">
+
+      <!-- Wheel name -->
+      <div class="panel__section">
+        <p class="panel__title" data-i18n="myWheels">Mes Roues</p>
+        <div id="wheels-list"></div>
+        <button id="new-wheel-btn" class="btn btn--secondary w-full mt-1" data-i18n="newWheel">
+          + Nouvelle Roue
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Current wheel name -->
+      <div class="panel__section">
+        <div class="input-group">
+          <label class="input-label" data-i18n="wheelName">Nom de la roue</label>
+          <input id="wheel-name" type="text" class="sl-input" placeholder="Ma Roue">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Templates -->
+      <div class="panel__section">
+        <p class="panel__title" data-i18n="templates">Modèles rapides</p>
+        <div class="templates-grid">
+          <button class="tpl-btn" data-template="yesno" data-i18n="tplYesNo">✅ Oui / Non</button>
+          <button class="tpl-btn" data-template="1to10" data-i18n="tpl1to10">🔢 1 à 10</button>
+          <button class="tpl-btn" data-template="colors" data-i18n="tplColors">🎨 Couleurs</button>
+          <button class="tpl-btn" data-template="days" data-i18n="tplDays">📅 Jours</button>
+          <button class="tpl-btn" data-template="months" data-i18n="tplMonths">🗓 Mois</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Actions -->
+      <div class="panel__section">
+        <div class="btn-row">
+          <button id="save-btn" class="btn btn--primary flex-1" data-i18n="saveWheel">💾 Sauvegarder</button>
+          <button id="share-btn" class="btn btn--secondary" data-i18n="shareWheel" title="Partager">🔗</button>
+        </div>
+        <div class="btn-row">
+          <button id="export-btn" class="btn btn--secondary flex-1" data-i18n="exportWheel">⬇ JSON</button>
+          <button id="import-btn" class="btn btn--secondary flex-1" data-i18n="importWheel">⬆ Import</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── WHEEL CENTER ────────────────────────────────────────── -->
+    <main class="wheel-center">
+
+      <!-- Wheel canvas wrapper with pin -->
+      <div class="wheel-canvas-wrap">
+        <div class="pin-wrap">
+          <canvas id="pin-canvas"></canvas>
+        </div>
+        <canvas id="wheel-canvas"></canvas>
+      </div>
+
+      <!-- Spin button -->
+      <div class="spin-btn-wrap">
+        <button id="spin-btn" data-i18n="spinBtn">LANCER LA ROUE</button>
+      </div>
+
+    </main>
+
+    <!-- ── RIGHT PANEL ─────────────────────────────────────────── -->
+    <aside class="panel panel--right">
+
+      <!-- Sections editor -->
+      <div class="panel__section">
+        <div class="flex items-center justify-between gap-2">
+          <p class="panel__title" data-i18n="sections">Sections</p>
+          <button id="weights-toggle" class="toggle-pill" data-i18n="advancedWeights">⚖ Poids</button>
+        </div>
+
+        <div id="sections-list"></div>
+
+        <button id="add-section-btn" class="btn btn--secondary w-full mt-1" data-i18n="addSection">
+          + Ajouter une section
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- History -->
+      <div class="panel__section">
+        <div class="flex items-center justify-between gap-2">
+          <p class="panel__title" data-i18n="history">Historique</p>
+          <button id="clear-history-btn" class="btn--ghost btn" data-i18n="clearHistory">Effacer</button>
+        </div>
+        <div id="history-list"></div>
+      </div>
+
+    </aside>
+
+  </div><!-- /main-layout -->
+
+</div><!-- /app -->
+
+<!-- ═══ RESULT MODAL ═══════════════════════════════════════════ -->
+<div id="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-label">
+  <div class="result-backdrop"></div>
+  <div class="result-card">
+    <div class="result-crown">👑</div>
+    <p id="result-label">Gagnant !</p>
+    <div class="gold-line"></div>
+    <p id="result-text"></p>
+    <div class="result-actions">
+      <button id="result-close" data-i18n="close">Fermer</button>
+      <button id="result-again" data-i18n="spinAgain">🔄 Relancer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONFETTI ═══════════════════════════════════════════════ -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ═══ SCRIPTS (ES Modules) ══════════════════════════════════ -->
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
