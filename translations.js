@@ -161,4 +161,4 @@ export const SEO_META = {
 }
 
 export const SUPPORTED_LANGS = ['fr', 'en', 'es']
-export const BASE_URL = 'https://spinlux.vercel.app' // ← change to your real domain
+export const BASE_URL = 'https://roulette-taupe-seven.vercel.app' // ← change to your real domain
