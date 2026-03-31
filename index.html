@@ -1,1306 +1,1434 @@
 <!DOCTYPE html>
 <html lang="fr" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SpinLux | Neon Glow Anti-Gravity Wheel</title>
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind CSS (for layout and utility classes) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        orbitron: ['Orbitron', 'sans-serif'],
-                        rajdhani: ['Rajdhani', 'sans-serif'],
-                    },
-                    colors: {
-                        dark: '#030308',
-                        panel: 'rgba(10, 10, 20, 0.65)',
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SpinLux | Decision Wheel</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        orbitron: ['Orbitron','sans-serif'],
+        rajdhani: ['Rajdhani','sans-serif']
+      },
+      colors: { dark: '#030308', panel: 'rgba(10,10,20,0.65)' }
+    }
+  }
+}
+</script>
+<style>
+:root {
+  --neon-cyan:    #00f3ff;
+  --neon-magenta: #ff00ff;
+  --neon-purple:  #b026ff;
+  --neon-green:   #39ff14;
+  --neon-gold:    #ffd700;
+  --bg-color:     #030308;
+  --wheel-size:   480px;
+}
+@media(max-width:768px){ :root { --wheel-size: 300px; } }
+@media(max-width:400px){ :root { --wheel-size: 260px; } }
 
-    <style>
-        /* ==========================================
-           CORE STYLES & NEON GLOW VARIABLES
-           ========================================== */
-        :root {
-            --neon-cyan: #00f3ff;
-            --neon-magenta: #ff00ff;
-            --neon-purple: #b026ff;
-            --neon-green: #39ff14;
-            --neon-gold: #ffd700;
-            --bg-color: #030308;
-            --wheel-size: 500px;
-        }
+*,*::before,*::after { box-sizing: border-box; }
+body {
+  background-color: var(--bg-color);
+  background-image: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #030308 100%);
+  color: white;
+  font-family: 'Rajdhani', sans-serif;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  min-height: 100vh;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+::-webkit-scrollbar-thumb { background: rgba(0,243,255,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,243,255,0.7); }
 
-        @media (max-width: 768px) {
-            :root { --wheel-size: 320px; }
-        }
+/* ── Animations ── */
+.anti-gravity        { animation: float  6s ease-in-out infinite; will-change: transform; }
+.anti-gravity-slow   { animation: float  8s ease-in-out infinite 1s; will-change: transform; }
+.anti-gravity-fast   { animation: float-s 4s ease-in-out infinite; will-change: transform; }
+@keyframes float   { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-14px) rotate(.8deg)} }
+@keyframes float-s { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 
-        body {
-            background-color: var(--bg-color);
-            color: white;
-            font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
-            overscroll-behavior: none;
-            /* Subtil background gradient */
-            background-image: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #030308 100%);
-        }
+/* ── Glass panel ── */
+.glass-panel {
+  background: rgba(10,10,20,0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  border-radius: 16px;
+  transition: border-color .3s, box-shadow .3s;
+}
+.glass-panel:hover { border-color: rgba(0,243,255,0.2); box-shadow: 0 8px 32px rgba(0,243,255,0.08); }
 
-        /* Custom Scrollbar for premium feel */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 243, 255, 0.8); }
+/* ── Neon helpers ── */
+.neon-cyan    { text-shadow: 0 0 6px var(--neon-cyan), 0 0 14px var(--neon-cyan); color:#fff; }
+.neon-gold    { text-shadow: 0 0 6px var(--neon-gold), 0 0 16px var(--neon-gold), 0 0 36px var(--neon-gold); color:#fff; }
+.neon-magenta { text-shadow: 0 0 6px var(--neon-magenta), 0 0 14px var(--neon-magenta); color:#fff; }
 
-        /* ==========================================
-           ANTI-GRAVITY & LEVITATION PHYSICS (60 FPS)
-           ========================================== */
-        .anti-gravity {
-            animation: float 6s ease-in-out infinite;
-            will-change: transform;
-        }
-        
-        .anti-gravity-delayed {
-            animation: float 7s ease-in-out infinite 1.5s;
-            will-change: transform;
-        }
+/* ── Wheel ── */
+#wheel-wrap {
+  width: var(--wheel-size);
+  height: var(--wheel-size);
+  position: relative;
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(0,243,255,.18), inset 0 0 40px rgba(255,0,255,.15), 0 0 90px rgba(0,243,255,.08);
+  border: 3px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  z-index: 10;
+}
+#wheel-canvas { width:100%; height:100%; border-radius:50%; will-change:transform; display:block; }
+.wheel-pointer {
+  position:absolute; top:-18px; left:50%; transform:translateX(-50%); z-index:20;
+  filter: drop-shadow(0 0 12px var(--neon-cyan));
+}
+.wheel-pointer::after {
+  content:''; display:block;
+  width:0; height:0;
+  border-left:18px solid transparent;
+  border-right:18px solid transparent;
+  border-top:36px solid #fff;
+}
 
-        .anti-gravity-fast {
-            animation: float-small 4s ease-in-out infinite;
-            will-change: transform;
-        }
+/* ── Buttons ── */
+.neon-btn {
+  background: transparent;
+  color: white;
+  border: 1px solid var(--neon-magenta);
+  box-shadow: 0 0 8px rgba(255,0,255,.18), inset 0 0 8px rgba(255,0,255,.12);
+  text-transform: uppercase;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+  transition: all .28s cubic-bezier(.25,.8,.25,1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.neon-btn::before {
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+  transition: left .45s ease;
+}
+.neon-btn:hover { background:rgba(255,0,255,.08); box-shadow:0 0 18px var(--neon-magenta),inset 0 0 12px rgba(255,0,255,.3); transform:translateY(-2px) scale(1.03); }
+.neon-btn:hover::before { left:100%; }
+.neon-btn:active { transform:scale(.96); }
 
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(1deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
+.neon-btn-cyan {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(0,243,255,.18), inset 0 0 8px rgba(0,243,255,.12);
+}
+.neon-btn-cyan:hover { background:rgba(0,243,255,.08); box-shadow:0 0 18px var(--neon-cyan),inset 0 0 12px rgba(0,243,255,.3); }
 
-        @keyframes float-small {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
-        }
+/* ── Inputs ── */
+input[type="text"],input[type="number"],input[type="range"],select {
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(255,255,255,.1);
+  color: white;
+  transition: all .25s ease;
+}
+input[type="text"]:focus,input[type="number"]:focus,select:focus {
+  outline:none; border-color:var(--neon-cyan); box-shadow:0 0 8px rgba(0,243,255,.3);
+}
+input[type="number"] { -moz-appearance:textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance:none; }
+select option { background:#0a0a1a; }
+input[type="range"] { -webkit-appearance:none; appearance:none; background:rgba(255,255,255,.1); border:none; height:4px; border-radius:2px; cursor:pointer; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; background:var(--neon-cyan); border-radius:50%; box-shadow:0 0 6px var(--neon-cyan); }
 
-        /* ==========================================
-           NEON GLOW EFFECTS
-           ========================================== */
-        .glass-panel {
-            background: var(--panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
+/* ── Segment list items ── */
+.seg-item {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;
+  transition: all .18s ease;
+  cursor:default;
+}
+.seg-item:hover { background:rgba(255,255,255,.04); border-color:rgba(0,243,255,.2); }
+.seg-item.dragging { opacity:.4; border:1.5px dashed var(--neon-cyan); }
 
-        .glass-panel:hover {
-            border-color: rgba(0, 243, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(0, 243, 255, 0.1);
-        }
+/* ── Tabs ── */
+.tab-btn { border-bottom:2px solid transparent; transition:all .25s ease; opacity:.55; }
+.tab-btn:hover { opacity:.85; }
+.tab-btn.active { opacity:1; border-bottom-color:var(--neon-cyan); color:var(--neon-cyan); text-shadow:0 0 8px rgba(0,243,255,.5); }
 
-        .neon-text-cyan {
-            text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
-            color: #fff;
-        }
-        
-        .neon-text-gold {
-            text-shadow: 0 0 5px var(--neon-gold), 0 0 10px var(--neon-gold), 0 0 20px var(--neon-gold);
-            color: #fff;
-        }
+/* ── Modal ── */
+#result-modal {
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(3,3,8,.82); backdrop-filter:blur(18px);
+  opacity:0; pointer-events:none; transition:opacity .35s; z-index:200;
+}
+#result-modal.active { opacity:1; pointer-events:all; }
+.result-content {
+  transform:scale(.8) translateY(40px);
+  transition:transform .55s cubic-bezier(.175,.885,.32,1.275);
+}
+#result-modal.active .result-content { transform:scale(1) translateY(0); }
 
-        .neon-border-cyan {
-            border: 1px solid var(--neon-cyan);
-            box-shadow: 0 0 5px var(--neon-cyan), inset 0 0 5px var(--neon-cyan);
-        }
+/* ── Stats bar ── */
+.stat-bar-fill {
+  height:100%; background:linear-gradient(90deg,var(--c1,var(--neon-cyan)),var(--c2,var(--neon-magenta)));
+  border-radius:3px;
+  box-shadow:0 0 6px var(--c1,var(--neon-cyan));
+  transition:width .6s ease;
+}
 
-        .neon-btn {
-            background: transparent;
-            color: white;
-            border: 1px solid var(--neon-magenta);
-            box-shadow: 0 0 10px rgba(255,0,255,0.2), inset 0 0 10px rgba(255,0,255,0.2);
-            text-transform: uppercase;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 2px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-            will-change: transform, box-shadow;
-        }
+/* ── Backgrounds ── */
+#bg-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; }
+#conf-canvas { position:fixed; inset:0; pointer-events:none; z-index:190; }
 
-        .neon-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: all 0.5s ease;
-        }
+/* ── Flags ── */
+.lang-flag {
+  cursor:pointer; filter:grayscale(1) opacity(.45); transition:all .25s ease; font-size:1.4rem; line-height:1;
+}
+.lang-flag:hover { filter:grayscale(0) opacity(1); transform:scale(1.15); }
+.lang-flag.active { filter:grayscale(0) opacity(1) drop-shadow(0 0 8px var(--neon-cyan)); }
 
-        .neon-btn:hover {
-            background: rgba(255, 0, 255, 0.1);
-            box-shadow: 0 0 20px var(--neon-magenta), inset 0 0 15px var(--neon-magenta);
-            transform: scale(1.05) translateY(-2px);
-            text-shadow: 0 0 8px #fff;
-        }
+/* ── Preset cards ── */
+.preset-card {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; border-radius:10px;
+  background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.06);
+  cursor:pointer; transition:all .2s ease;
+}
+.preset-card:hover { background:rgba(0,243,255,.06); border-color:rgba(0,243,255,.3); }
 
-        .neon-btn:hover::before { left: 100%; }
+/* ── Weight toggle ── */
+.weight-badge {
+  font-size:11px; padding:2px 7px; border-radius:20px;
+  background:rgba(176,38,255,.2); border:1px solid rgba(176,38,255,.4);
+  color:rgba(176,38,255,.9); font-family:'Orbitron',sans-serif;
+  transition: all .25s;
+}
 
-        .neon-btn:active { transform: scale(0.95); }
+/* ── Responsive layout ── */
+@media(max-width:768px) {
+  .right-panel { order: 2; width: 100%; }
+  .left-panel  { order: 1; }
+}
 
-        .neon-btn-cyan {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0,243,255,0.2), inset 0 0 10px rgba(0,243,255,0.2);
-        }
-        .neon-btn-cyan:hover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 15px var(--neon-cyan);
-        }
-
-        /* ==========================================
-           WHEEL SPECIFICS
-           ========================================== */
-        #wheel-container {
-            width: var(--wheel-size);
-            height: var(--wheel-size);
-            position: relative;
-            border-radius: 50%;
-            /* Outer glowing ring */
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2), 
-                        inset 0 0 40px rgba(255, 0, 255, 0.2),
-                        0 0 100px rgba(0, 243, 255, 0.1);
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            perspective: 1000px;
-            z-index: 10;
-        }
-
-        #wheel-canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            /* Hardware acceleration for rotation */
-            transform-style: preserve-3d;
-            will-change: transform;
-        }
-
-        /* The Pointer / Selector */
-        .wheel-pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 50px;
-            background: clip-path(polygon(50% 100%, 0 0, 100% 0));
-            z-index: 20;
-            filter: drop-shadow(0 0 15px var(--neon-cyan));
-            display: flex;
-            justify-content: center;
-        }
-        
-        .wheel-pointer::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid #fff; /* White core */
-            filter: drop-shadow(0 0 5px var(--neon-cyan));
-        }
-
-        /* ==========================================
-           MODALS & OVERLAYS
-           ========================================== */
-        #result-modal {
-            background: rgba(3, 3, 8, 0.85);
-            backdrop-filter: blur(20px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            z-index: 100;
-        }
-        
-        #result-modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .result-content {
-            transform: scale(0.8) translateY(50px);
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #result-modal.active .result-content {
-            transform: scale(1) translateY(0);
-        }
-
-        /* ==========================================
-           UI ELEMENTS (Inputs, Lists)
-           ========================================== */
-        input[type="text"], input[type="number"] {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        input[type="text"]:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-        }
-
-        .segment-item {
-            transition: all 0.2s ease;
-            border-left: 3px solid transparent;
-        }
-        .segment-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateX(5px);
-        }
-        .segment-item.dragging {
-            opacity: 0.5;
-            background: rgba(0, 243, 255, 0.1);
-        }
-
-        /* Particles Canvas - Background */
-        #bg-particles, #confetti-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        #confetti-canvas { z-index: 90; }
-
-        /* Flags */
-        .lang-flag {
-            cursor: pointer;
-            filter: grayscale(100%) opacity(0.5);
-            transition: all 0.3s ease;
-            font-size: 1.5rem;
-        }
-        .lang-flag:hover { filter: grayscale(0%) opacity(1) drop-shadow(0 0 10px #fff); transform: scale(1.2); }
-        .lang-flag.active { filter: grayscale(0%) opacity(1) drop-shadow(0 0 10px var(--neon-cyan)); }
-
-        /* Tabs */
-        .tab-btn {
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-            opacity: 0.6;
-        }
-        .tab-btn:hover { opacity: 1; }
-        .tab-btn.active {
-            opacity: 1;
-            border-bottom-color: var(--neon-cyan);
-            color: var(--neon-cyan);
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-        }
-    </style>
+/* ── Toast ── */
+#toast {
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(10px);
+  background:rgba(10,10,20,.9); border:1px solid rgba(255,255,255,.15);
+  color:#fff; padding:10px 24px; border-radius:40px;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+  opacity:0; pointer-events:none; transition:opacity .3s, transform .3s; z-index:300;
+  font-family:'Rajdhani',sans-serif; font-weight:600; font-size:15px;
+  white-space:nowrap;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
 </head>
-<body class="antialiased min-h-screen flex flex-col">
+<body class="antialiased">
 
-    <!-- Background Particles Canvas -->
-    <canvas id="bg-particles"></canvas>
-    <!-- Confetti Canvas -->
-    <canvas id="confetti-canvas"></canvas>
+<canvas id="bg-canvas"></canvas>
+<canvas id="conf-canvas"></canvas>
 
-    <!-- Header -->
-    <header class="relative z-50 flex justify-between items-center p-4 md:p-6 glass-panel rounded-none border-t-0 border-l-0 border-r-0">
-        <div class="flex items-center gap-3">
-            <div class="text-3xl font-orbitron font-black tracking-wider anti-gravity-fast cursor-pointer" onclick="location.reload()">
-                <span class="neon-text-cyan">SPIN</span><span class="text-white">LUX</span>
-            </div>
+<!-- ═══ HEADER ═══ -->
+<header class="relative z-50 flex justify-between items-center px-5 py-4 glass-panel rounded-none border-t-0 border-l-0 border-r-0">
+  <div class="flex items-center gap-4">
+    <div class="font-orbitron font-black text-2xl tracking-widest anti-gravity-fast cursor-pointer select-none" onclick="location.reload()">
+      <span class="neon-cyan">SPIN</span><span class="text-white">LUX</span>
+    </div>
+  </div>
+
+  <!-- Wheel title (center on desktop) -->
+  <input id="wheel-title" type="text" maxlength="40"
+    class="hidden md:block text-center font-orbitron text-sm tracking-widest rounded-lg px-4 py-2 w-56 bg-transparent border border-transparent hover:border-white/10 focus:border-cyan-400/50 transition-all"
+    value="Ma Roue" style="color:rgba(255,255,255,.7)">
+
+  <div class="flex items-center gap-4">
+    <!-- Audio -->
+    <button id="btn-audio" title="Son" class="text-gray-400 hover:text-white transition-colors text-lg">
+      <i class="fas fa-volume-up"></i>
+    </button>
+    <!-- Fullscreen -->
+    <button id="btn-fs" title="Plein écran" class="hidden md:block text-gray-400 hover:text-white transition-colors text-lg">
+      <i class="fas fa-expand"></i>
+    </button>
+    <!-- Lang -->
+    <div class="flex items-center gap-2">
+      <span class="lang-flag active" data-lang="fr">🇫🇷</span>
+      <span class="lang-flag" data-lang="en">🇬🇧</span>
+      <span class="lang-flag" data-lang="es">🇪🇸</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="flex flex-col lg:flex-row gap-6 p-4 md:p-6 relative z-10 max-w-screen-2xl mx-auto w-full">
+
+  <!-- ─── LEFT PANEL ─── -->
+  <aside class="left-panel w-full lg:w-[400px] flex flex-col gap-4 anti-gravity-slow">
+
+    <!-- Options editor -->
+    <div class="glass-panel p-5 flex flex-col gap-4">
+      <!-- Tab bar -->
+      <div class="flex border-b border-white/10 font-orbitron text-xs">
+        <button class="tab-btn active flex-1 pb-2" data-tab="options"><i class="fas fa-list mr-1"></i><span data-i18n="tab_options">OPTIONS</span></button>
+        <button class="tab-btn flex-1 pb-2" data-tab="presets"><i class="fas fa-magic mr-1"></i><span data-i18n="tab_presets">MODÈLES</span></button>
+        <button class="tab-btn flex-1 pb-2" data-tab="settings"><i class="fas fa-cog mr-1"></i><span data-i18n="tab_settings">RÉGLAGES</span></button>
+      </div>
+
+      <!-- ── OPTIONS TAB ── -->
+      <div id="tab-options" class="tab-content flex flex-col gap-3">
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between">
+          <span id="seg-count" class="text-xs text-gray-400 font-orbitron">0/50</span>
+          <div class="flex gap-2">
+            <!-- Weight toggle -->
+            <button id="btn-weights" class="weight-badge" data-i18n="weights_off">POIDS OFF</button>
+            <!-- Shuffle -->
+            <button id="btn-shuffle" title="Mélanger" class="text-xs neon-btn px-3 py-1 rounded-lg"><i class="fas fa-random"></i></button>
+            <!-- Clear all -->
+            <button id="btn-clear" title="Vider" class="text-xs border border-red-500/60 text-red-400 hover:bg-red-500/20 px-3 py-1 rounded-lg transition-colors"><i class="fas fa-trash"></i></button>
+          </div>
         </div>
-        
-        <div class="flex items-center gap-6">
-            <!-- Audio Toggle -->
-            <button id="btn-audio" class="text-gray-400 hover:text-white transition-colors" title="Toggle Sound">
-                <i class="fas fa-volume-up text-xl drop-shadow-[0_0_5px_currentColor]"></i>
-            </button>
-            
-            <!-- Fullscreen -->
-            <button id="btn-fullscreen" class="text-gray-400 hover:text-white transition-colors hidden md:block" title="Fullscreen">
-                <i class="fas fa-expand text-xl drop-shadow-[0_0_5px_currentColor]"></i>
-            </button>
 
-            <!-- Language Selector -->
-            <div class="flex gap-3">
-                <span class="lang-flag active" data-lang="fr" title="Français">🇫🇷</span>
-                <span class="lang-flag" data-lang="en" title="English">🇬🇧</span>
-                <span class="lang-flag" data-lang="es" title="Español">🇪🇸</span>
-            </div>
+        <!-- Segment list -->
+        <div id="seg-list" class="flex flex-col gap-2 overflow-y-auto max-h-52 pr-1"></div>
+
+        <!-- Add form -->
+        <form id="add-form" class="flex gap-2 pt-3 border-t border-white/08">
+          <input type="color" id="add-color" class="w-9 h-9 rounded-lg cursor-pointer bg-transparent border border-white/10 p-0.5 flex-shrink-0">
+          <input type="text" id="add-text" class="flex-grow rounded-lg px-3 py-2 text-sm" data-i18n-ph="ph_add" placeholder="Nouvelle option…" required autocomplete="off">
+          <div id="add-weight-wrap" class="hidden">
+            <input type="number" id="add-weight" min="1" max="100" value="1" class="w-14 rounded-lg px-2 py-2 text-sm text-center">
+          </div>
+          <button type="submit" class="neon-btn neon-btn-cyan px-4 rounded-lg text-sm"><i class="fas fa-plus"></i></button>
+        </form>
+      </div>
+
+      <!-- ── PRESETS TAB ── -->
+      <div id="tab-presets" class="tab-content hidden flex-col gap-2 overflow-y-auto max-h-80 pr-1">
+        <p class="text-xs text-gray-400 mb-1" data-i18n="presets_desc">Remplacer la roue par un modèle prédéfini.</p>
+        <div id="presets-list" class="flex flex-col gap-2"></div>
+      </div>
+
+      <!-- ── SETTINGS TAB ── -->
+      <div id="tab-settings" class="tab-content hidden flex-col gap-5">
+        <!-- Spin duration -->
+        <div>
+          <label class="text-xs text-gray-400 uppercase tracking-widest font-orbitron block mb-2" data-i18n="lbl_duration">Durée du spin</label>
+          <div class="flex items-center gap-3">
+            <input type="range" id="spin-duration" min="2" max="12" step="1" value="6" class="flex-1">
+            <span id="spin-duration-val" class="text-cyan-400 font-orbitron text-sm w-12 text-right">6s</span>
+          </div>
+          <div class="flex justify-between text-xs text-gray-600 mt-1">
+            <span data-i18n="dur_fast">Rapide</span><span data-i18n="dur_dramatic">Dramatique</span>
+          </div>
         </div>
-    </header>
-
-    <!-- Main Content Grid -->
-    <main class="flex-grow flex flex-col lg:flex-row p-4 md:p-8 gap-8 relative z-10 max-w-screen-2xl mx-auto w-full">
-        
-        <!-- Left Side: The Wheel -->
-        <section class="flex-1 flex flex-col items-center justify-center min-h-[50vh] lg:min-h-0 relative">
-            <div class="anti-gravity flex flex-col items-center">
-                <!-- Wheel Wrapper -->
-                <div id="wheel-container" class="cursor-pointer group">
-                    <div class="wheel-pointer"></div>
-                    <!-- The Canvas rotated by JS -->
-                    <canvas id="wheel-canvas" width="1000" height="1000"></canvas>
-                    
-                    <!-- Center Decor -->
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-dark rounded-full border-4 border-white z-10 shadow-[0_0_20px_#fff] flex items-center justify-center">
-                        <div class="w-6 h-6 rounded-full bg-black neon-border-cyan animate-pulse"></div>
-                    </div>
-                </div>
-
-                <!-- Spin Button -->
-                <button id="btn-spin" class="mt-12 px-12 py-4 rounded-full neon-btn text-2xl font-bold w-64">
-                    <span data-i18n="spin_btn">LANCER</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- Right Side: Controls & Data -->
-        <section class="w-full lg:w-[450px] flex flex-col gap-4 anti-gravity-delayed">
-            
-            <!-- Tools Panel -->
-            <div class="glass-panel p-5 flex flex-col h-[600px]">
-                
-                <!-- Tabs -->
-                <div class="flex border-b border-gray-700 mb-4 font-orbitron text-sm">
-                    <button class="tab-btn active flex-1 pb-2" data-tab="segments">
-                        <i class="fas fa-list mr-2"></i><span data-i18n="tab_segments">ÉLÉMENTS</span>
-                    </button>
-                    <button class="tab-btn flex-1 pb-2" data-tab="templates">
-                        <i class="fas fa-magic mr-2"></i><span data-i18n="tab_templates">MODÈLES</span>
-                    </button>
-                    <button class="tab-btn flex-1 pb-2" data-tab="history">
-                        <i class="fas fa-history mr-2"></i><span data-i18n="tab_history">HISTORIQUE</span>
-                    </button>
-                </div>
-
-                <!-- Tab Content: Segments -->
-                <div id="tab-segments" class="tab-content flex-grow flex flex-col overflow-hidden">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm text-gray-400" id="segment-count">2/50 <span data-i18n="items">éléments</span></span>
-                        <div class="flex gap-2">
-                            <button id="btn-share" class="text-xs neon-btn neon-btn-cyan px-3 py-1 rounded" title="Share URL">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                            <button id="btn-shuffle" class="text-xs neon-btn px-3 py-1 rounded" title="Shuffle">
-                                <i class="fas fa-random"></i>
-                            </button>
-                            <button id="btn-clear" class="text-xs border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-3 py-1 rounded transition-colors" title="Clear">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Segment List (Scrollable) -->
-                    <div id="segment-list" class="flex-grow overflow-y-auto pr-2 space-y-2 mb-4">
-                        <!-- JS injected segments -->
-                    </div>
-
-                    <!-- Add New -->
-                    <form id="add-form" class="flex gap-2 mt-auto pt-4 border-t border-gray-700">
-                        <input type="color" id="add-color" class="w-10 h-10 rounded cursor-pointer bg-transparent border-none p-0">
-                        <input type="text" id="add-text" class="flex-grow rounded px-3 py-2 text-sm" placeholder="Nouvel élément..." required autocomplete="off">
-                        <button type="submit" class="neon-btn neon-btn-cyan px-4 rounded">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Tab Content: Templates -->
-                <div id="tab-templates" class="tab-content hidden flex-grow overflow-y-auto pr-2 space-y-3">
-                    <div class="text-sm text-gray-400 mb-4" data-i18n="template_desc">Remplacez la roue actuelle par un modèle rapide.</div>
-                    <!-- JS injected templates -->
-                </div>
-
-                <!-- Tab Content: History -->
-                <div id="tab-history" class="tab-content hidden flex-grow overflow-y-auto pr-2">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm text-gray-400" data-i18n="history_desc">10 derniers résultats</span>
-                        <button id="btn-clear-history" class="text-xs text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <ul id="history-list" class="space-y-2">
-                        <!-- JS injected history -->
-                        <li class="text-gray-500 text-sm italic text-center mt-10" data-i18n="history_empty">Aucun résultat pour le moment.</li>
-                    </ul>
-                </div>
-
-            </div>
-        </section>
-    </main>
-
-    <!-- Result Modal (Full Screen Overlay) -->
-    <div id="result-modal" class="fixed inset-0 flex items-center justify-center">
-        <div class="result-content flex flex-col items-center anti-gravity">
-            <h2 class="text-2xl font-orbitron text-gray-300 mb-4 tracking-widest" data-i18n="winner_title">GAGNANT !</h2>
-            <div id="winner-text" class="text-6xl md:text-8xl font-black font-orbitron text-center px-4 neon-text-gold break-words max-w-screen-lg">
-                RESULT
-            </div>
-            <button id="btn-close-modal" class="mt-12 neon-btn neon-btn-cyan px-8 py-3 rounded-full text-lg">
-                <span data-i18n="close_btn">CONTINUER</span>
-            </button>
+        <!-- Mode: remove winner -->
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-300" data-i18n="lbl_remove">Supprimer le gagnant</span>
+          <button id="btn-remove-winner" class="w-11 h-6 rounded-full border border-white/20 relative transition-colors bg-white/10" aria-pressed="false">
+            <span class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow"></span>
+          </button>
         </div>
+        <!-- Share -->
+        <button id="btn-share" class="neon-btn neon-btn-cyan px-4 py-2 rounded-lg text-sm w-full">
+          <i class="fas fa-share-alt mr-2"></i><span data-i18n="btn_share">PARTAGER LA ROUE</span>
+        </button>
+        <!-- Reset stats -->
+        <button id="btn-reset-stats" class="border border-red-500/50 text-red-400 hover:bg-red-500/10 px-4 py-2 rounded-lg text-sm w-full transition-colors font-orbitron">
+          <i class="fas fa-chart-bar mr-2"></i><span data-i18n="btn_reset_stats">RÉINITIALISER STATS</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-dark border border-gray-600 text-white px-6 py-3 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-        Message
+    <!-- History -->
+    <div class="glass-panel p-5 flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <span class="font-orbitron text-xs tracking-widest text-cyan-400" data-i18n="lbl_history">HISTORIQUE</span>
+        <button id="btn-clear-history" class="text-xs text-red-400 hover:text-red-300 transition-colors"><i class="fas fa-trash"></i></button>
+      </div>
+      <ul id="history-list" class="flex flex-col gap-2 max-h-36 overflow-y-auto pr-1">
+        <li class="text-gray-500 text-sm italic text-center py-3" data-i18n="history_empty">Aucun résultat</li>
+      </ul>
     </div>
 
-    <script>
-        /* ==========================================================================
-           1. CORE DATA & STATE MANAGEMENT
-           ========================================================================== */
-        
-        // Neon Color Palette
-        const neonColors = [
-            '#00f3ff', '#ff00ff', '#39ff14', '#ffd700', '#b026ff', 
-            '#ff3131', '#00ff00', '#1f51ff', '#ff1493', '#00ffff'
-        ];
-
-        // App State
-        const state = {
-            segments: [],
-            history: [],
-            isSpinning: false,
-            currentRotation: 0,
-            soundEnabled: true,
-            lang: 'fr'
-        };
-
-        // Templates
-        const templates = {
-            'yes_no': {
-                fr: "Oui / Non", en: "Yes / No", es: "Sí / No",
-                data: [{text: "OUI", color: "#39ff14"}, {text: "NON", color: "#ff3131"}]
-            },
-            'numbers': {
-                fr: "Chiffres 1-10", en: "Numbers 1-10", es: "Números 1-10",
-                data: Array.from({length: 10}, (_, i) => ({text: `${i+1}`, color: neonColors[i%neonColors.length]}))
-            },
-            'days': {
-                fr: "Jours de la semaine", en: "Days of week", es: "Días de la semana",
-                data: [
-                    {text: "Lundi", color: neonColors[0]}, {text: "Mardi", color: neonColors[1]},
-                    {text: "Mercredi", color: neonColors[2]}, {text: "Jeudi", color: neonColors[3]},
-                    {text: "Vendredi", color: neonColors[4]}, {text: "Samedi", color: neonColors[5]},
-                    {text: "Dimanche", color: neonColors[6]}
-                ]
-            }
-        };
-
-        // Translations Dictionary
-        const i18n = {
-            fr: {
-                spin_btn: "LANCER LA ROUE",
-                tab_segments: "ÉLÉMENTS",
-                tab_templates: "MODÈLES",
-                tab_history: "HISTORIQUE",
-                items: "éléments",
-                placeholder_add: "Nouvel élément...",
-                template_desc: "Remplacez la roue actuelle par un modèle rapide.",
-                history_desc: "10 derniers résultats",
-                history_empty: "Aucun résultat pour le moment.",
-                winner_title: "LE RÉSULTAT EST :",
-                close_btn: "CONTINUER",
-                msg_min_segments: "Il faut au moins 2 éléments pour lancer la roue.",
-                msg_copied: "Lien copié dans le presse-papier !",
-                msg_cleared: "Roue vidée."
-            },
-            en: {
-                spin_btn: "SPIN THE WHEEL",
-                tab_segments: "SEGMENTS",
-                tab_templates: "TEMPLATES",
-                tab_history: "HISTORY",
-                items: "items",
-                placeholder_add: "New item...",
-                template_desc: "Replace current wheel with a quick template.",
-                history_desc: "Last 10 results",
-                history_empty: "No results yet.",
-                winner_title: "THE RESULT IS:",
-                close_btn: "CONTINUE",
-                msg_min_segments: "You need at least 2 segments to spin.",
-                msg_copied: "Link copied to clipboard!",
-                msg_cleared: "Wheel cleared."
-            },
-            es: {
-                spin_btn: "GIRAR LA RULETA",
-                tab_segments: "ELEMENTOS",
-                tab_templates: "PLANTILLAS",
-                tab_history: "HISTORIAL",
-                items: "elementos",
-                placeholder_add: "Nuevo elemento...",
-                template_desc: "Reemplazar la ruleta actual con una plantilla.",
-                history_desc: "Últimos 10 resultados",
-                history_empty: "Sin resultados aún.",
-                winner_title: "EL RESULTADO ES:",
-                close_btn: "CONTINUAR",
-                msg_min_segments: "Necesitas al menos 2 elementos para girar.",
-                msg_copied: "¡Enlace copiado al portapapeles!",
-                msg_cleared: "Ruleta vaciada."
-            }
-        };
-
-        // DOM Elements
-        const canvas = document.getElementById('wheel-canvas');
-        const ctx = canvas.getContext('2d');
-        const listEl = document.getElementById('segment-list');
-        const spinBtn = document.getElementById('btn-spin');
-        const wheelContainer = document.getElementById('wheel-container');
-
-        /* ==========================================================================
-           2. AUDIO SYSTEM (Synthesized, no external files)
-           ========================================================================== */
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
-
-        function initAudio() {
-            if (!audioCtx) audioCtx = new AudioContext();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        function playTick() {
-            if (!state.soundEnabled) return;
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.type = 'triangle';
-            // High tech click sound
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.05);
-            
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
-        }
-
-        function playWin() {
-            if (!state.soundEnabled) return;
-            initAudio();
-            const now = audioCtx.currentTime;
-            
-            // Crystal clear win chord
-            [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => { // C major chord
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.value = freq;
-                
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(0.2, now + 0.1 + (i*0.05));
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 2);
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 2);
-            });
-        }
-
-        /* ==========================================================================
-           3. WHEEL RENDERING (Canvas 60 FPS)
-           ========================================================================== */
-        
-        function drawWheel() {
-            const width = canvas.width;
-            const height = canvas.height;
-            const centerX = width / 2;
-            const centerY = height / 2;
-            const radius = width / 2 - 10; // Padding for shadow
-
-            ctx.clearRect(0, 0, width, height);
-
-            if (state.segments.length === 0) return;
-
-            const sliceAngle = (2 * Math.PI) / state.segments.length;
-
-            state.segments.forEach((segment, index) => {
-                const startAngle = index * sliceAngle - Math.PI / 2;
-                const endAngle = startAngle + sliceAngle;
-
-                // Draw Slice
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-                ctx.closePath();
-
-                // Gradient for premium metallic/neon look
-                const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-                // Convert hex to rgb for opacity manipulation
-                const r = parseInt(segment.color.slice(1, 3), 16);
-                const g = parseInt(segment.color.slice(3, 5), 16);
-                const b = parseInt(segment.color.slice(5, 7), 16);
-                
-                gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.2)`);
-                gradient.addColorStop(0.8, segment.color);
-                gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0.8)`);
-
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                // Slice Borders (Neon inner lines)
-                ctx.lineWidth = 4;
-                ctx.strokeStyle = '#050510';
-                ctx.stroke();
-
-                // Draw Text
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                // Rotate to center of slice
-                ctx.rotate(startAngle + sliceAngle / 2);
-                
-                // Text styling
-                ctx.textAlign = 'right';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 45px Orbitron, sans-serif';
-                
-                // Shadow for legibility (glow)
-                ctx.shadowColor = 'rgba(0,0,0,0.8)';
-                ctx.shadowBlur = 10;
-                ctx.shadowOffsetX = 2;
-                ctx.shadowOffsetY = 2;
-
-                // Truncate text if too long
-                let text = segment.text;
-                if (text.length > 15) text = text.substring(0, 13) + '...';
-
-                // Distance from center
-                ctx.fillText(text, radius - 40, 0);
-                ctx.restore();
-            });
-
-            // Center inner circle (metallic joint)
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
-            ctx.fillStyle = '#030308';
-            ctx.fill();
-            ctx.lineWidth = 4;
-            ctx.strokeStyle = '#fff';
-            ctx.stroke();
-        }
-
-        /* ==========================================================================
-           4. SPIN PHYSICS & ANIMATION
-           ========================================================================== */
-        
-        // Custom Easing: easeOutBack for that anti-gravity bounce
-        function easeOutBack(t, b, c, d, s = 1.2) {
-            return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
-        }
-
-        function spinWheel() {
-            if (state.isSpinning || state.segments.length < 2) {
-                if(state.segments.length < 2) showToast(i18n[state.lang].msg_min_segments);
-                return;
-            }
-
-            initAudio(); // Required by browsers to unlock audio on first interaction
-            state.isSpinning = true;
-            spinBtn.style.opacity = '0.5';
-            spinBtn.style.pointerEvents = 'none';
-
-            // Remove float animation during spin for realistic physics, keep hardware accel
-            wheelContainer.parentElement.classList.remove('anti-gravity');
-
-            // Physics params
-            const spinTimeTotal = 6000 + Math.random() * 2000; // 6-8 seconds
-            const spins = 10 + Math.random() * 5; // 10-15 full rotations
-            
-            // Target angle calculation
-            const targetRotation = state.currentRotation + (spins * 360) + (Math.random() * 360);
-            const startRotation = state.currentRotation;
-            const changeInRotation = targetRotation - startRotation;
-
-            let startTime = null;
-            let lastTickAngle = startRotation;
-
-            function animate(currentTime) {
-                if (!startTime) startTime = currentTime;
-                const elapsedTime = currentTime - startTime;
-
-                if (elapsedTime < spinTimeTotal) {
-                    // Calculate current angle with easing
-                    state.currentRotation = easeOutBack(elapsedTime, startRotation, changeInRotation, spinTimeTotal, 1.1);
-                    
-                    // Apply rotation via CSS transform for 60FPS hardware acceleration
-                    canvas.style.transform = `rotate(${state.currentRotation}deg)`;
-
-                    // Tick sound logic (trigger when passing a segment boundary)
-                    const sliceAngle = 360 / state.segments.length;
-                    // Adjust rotation to account for initial pointer position (-90deg offset in draw)
-                    const normalizedCurrent = (state.currentRotation) % 360;
-                    const normalizedLast = (lastTickAngle) % 360;
-                    
-                    // Detect boundary cross
-                    if (Math.floor(normalizedCurrent / sliceAngle) !== Math.floor(normalizedLast / sliceAngle) || 
-                        Math.abs(normalizedCurrent - normalizedLast) > sliceAngle) {
-                        playTick();
-                    }
-                    lastTickAngle = state.currentRotation;
-
-                    requestAnimationFrame(animate);
-                } else {
-                    // Animation finished
-                    state.currentRotation = targetRotation % 360;
-                    canvas.style.transform = `rotate(${state.currentRotation}deg)`;
-                    state.isSpinning = false;
-                    spinBtn.style.opacity = '1';
-                    spinBtn.style.pointerEvents = 'all';
-                    
-                    // Restore anti-gravity
-                    wheelContainer.parentElement.classList.add('anti-gravity');
-
-                    calculateResult();
-                }
-            }
-
-            requestAnimationFrame(animate);
-        }
-
-        function calculateResult() {
-            // Pointer is at the top (270 degrees mathematically, but in our CSS rotation context, 
-            // the top is 0 relative to the container, minus the rotation applied).
-            // Canvas rotates clockwise.
-            const sliceAngle = 360 / state.segments.length;
-            
-            // We need to find which slice is at the top (0 degrees).
-            // Current rotation tells us how much the wheel turned clockwise.
-            // So the top is at -currentRotation.
-            let normalizedRotation = state.currentRotation % 360;
-            if (normalizedRotation < 0) normalizedRotation += 360; // strictly positive
-
-            // The slice that is at the top is the one offset by the rotation.
-            // Because our drawing starts at -90deg (top), index 0 is at top when rotation is 0.
-            // As we rotate positive, index 0 moves right. So the top slice index increases backwards.
-            let winningIndex = Math.floor((360 - normalizedRotation) / sliceAngle) % state.segments.length;
-            
-            const winner = state.segments[winningIndex];
-            
-            // Update History
-            state.history.unshift({ text: winner.text, color: winner.color, time: new Date() });
-            if (state.history.length > 10) state.history.pop();
-            renderHistory();
-            saveData();
-
-            showWinnerModal(winner);
-        }
-
-        /* ==========================================================================
-           5. UI & DOM MANIPULATION
-           ========================================================================== */
-
-        function initApp() {
-            // Setup Event Listeners
-            spinBtn.addEventListener('click', spinWheel);
-            wheelContainer.addEventListener('click', spinWheel);
-            
-            document.getElementById('add-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                addSegment();
-            });
-
-            document.getElementById('btn-clear').addEventListener('click', () => {
-                state.segments = [];
-                updateWheel();
-                showToast(i18n[state.lang].msg_cleared);
-            });
-
-            document.getElementById('btn-shuffle').addEventListener('click', () => {
-                state.segments.sort(() => Math.random() - 0.5);
-                updateWheel();
-            });
-
-            document.getElementById('btn-share').addEventListener('click', shareUrl);
-
-            document.getElementById('btn-audio').addEventListener('click', (e) => {
-                state.soundEnabled = !state.soundEnabled;
-                e.currentTarget.innerHTML = state.soundEnabled ? 
-                    '<i class="fas fa-volume-up text-xl drop-shadow-[0_0_5px_currentColor]"></i>' : 
-                    '<i class="fas fa-volume-mute text-xl text-gray-600"></i>';
-            });
-
-            document.getElementById('btn-fullscreen').addEventListener('click', toggleFullScreen);
-
-            document.getElementById('btn-close-modal').addEventListener('click', closeWinnerModal);
-
-            document.getElementById('btn-clear-history').addEventListener('click', () => {
-                state.history = [];
-                renderHistory();
-                saveData();
-            });
-
-            // Tabs setup
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'border-b-cyan-400', 'text-cyan-400'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                    
-                    btn.classList.add('active');
-                    document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
-                });
-            });
-
-            // Language setup
-            document.querySelectorAll('.lang-flag').forEach(flag => {
-                flag.addEventListener('click', (e) => {
-                    document.querySelectorAll('.lang-flag').forEach(f => f.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-                    setLanguage(e.currentTarget.dataset.lang);
-                });
-            });
-
-            // Color picker random init
-            document.getElementById('add-color').value = neonColors[Math.floor(Math.random() * neonColors.length)];
-
-            // Load Data
-            loadData();
-            setLanguage(state.lang);
-            renderTemplates();
-            
-            // Start Canvas loops
-            drawWheel();
-            initParticles();
-            initConfetti();
-        }
-
-        function addSegment() {
-            if (state.segments.length >= 50) return;
-            const textInput = document.getElementById('add-text');
-            const colorInput = document.getElementById('add-color');
-            const text = textInput.value.trim();
-            
-            if (text) {
-                state.segments.push({ text: text, color: colorInput.value });
-                textInput.value = '';
-                // Cycle color for next input
-                colorInput.value = neonColors[state.segments.length % neonColors.length];
-                updateWheel();
-            }
-        }
-
-        function removeSegment(index) {
-            state.segments.splice(index, 1);
-            updateWheel();
-        }
-
-        function updateWheel() {
-            drawWheel();
-            renderSegmentsList();
-            saveData();
-            document.getElementById('segment-count').innerHTML = `${state.segments.length}/50 <span data-i18n="items">${i18n[state.lang].items}</span>`;
-            updateURLHash();
-        }
-
-        function renderSegmentsList() {
-            listEl.innerHTML = '';
-            state.segments.forEach((seg, index) => {
-                const li = document.createElement('div');
-                li.className = 'segment-item flex items-center justify-between bg-dark/50 p-2 rounded border border-gray-800 cursor-grab';
-                li.draggable = true;
-                li.dataset.index = index;
-                
-                // Color indicator
-                const colorDot = document.createElement('div');
-                colorDot.className = 'w-4 h-4 rounded-full mr-3 shadow-lg';
-                colorDot.style.backgroundColor = seg.color;
-                colorDot.style.boxShadow = `0 0 10px ${seg.color}`;
-
-                // Text
-                const span = document.createElement('span');
-                span.className = 'flex-grow font-semibold text-sm truncate';
-                span.textContent = seg.text;
-
-                // Delete btn
-                const delBtn = document.createElement('button');
-                delBtn.className = 'text-gray-500 hover:text-red-500 transition-colors ml-2';
-                delBtn.innerHTML = '<i class="fas fa-times"></i>';
-                delBtn.onclick = () => removeSegment(index);
-
-                // Drag handles
-                li.addEventListener('dragstart', handleDragStart);
-                li.addEventListener('dragover', handleDragOver);
-                li.addEventListener('drop', handleDrop);
-                li.addEventListener('dragend', handleDragEnd);
-
-                const leftWrapper = document.createElement('div');
-                leftWrapper.className = 'flex items-center w-[85%] overflow-hidden';
-                leftWrapper.appendChild(colorDot);
-                leftWrapper.appendChild(span);
-
-                li.appendChild(leftWrapper);
-                li.appendChild(delBtn);
-                listEl.appendChild(li);
-            });
-        }
-
-        // Drag & Drop implementation
-        let dragSrcEl = null;
-        function handleDragStart(e) {
-            dragSrcEl = this;
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', this.dataset.index);
-            this.classList.add('dragging');
-        }
-        function handleDragOver(e) {
-            if (e.preventDefault) e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            return false;
-        }
-        function handleDrop(e) {
-            if (e.stopPropagation) e.stopPropagation();
-            if (dragSrcEl !== this) {
-                const srcIndex = parseInt(e.dataTransfer.getData('text/plain'));
-                const destIndex = parseInt(this.dataset.index);
-                
-                // Swap in array
-                const item = state.segments.splice(srcIndex, 1)[0];
-                state.segments.splice(destIndex, 0, item);
-                updateWheel();
-            }
-            return false;
-        }
-        function handleDragEnd(e) {
-            this.classList.remove('dragging');
-        }
-
-        function renderTemplates() {
-            const container = document.getElementById('tab-templates');
-            // Keep the description text, remove buttons
-            Array.from(container.children).forEach(c => {
-                if(c.tagName === 'BUTTON') c.remove();
-            });
-
-            Object.keys(templates).forEach(key => {
-                const tpl = templates[key];
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-3 rounded glass-panel hover:bg-white/5 transition-all mb-2 flex justify-between items-center group';
-                btn.innerHTML = `
-                    <span class="font-orbitron text-sm group-hover:text-cyan-400 transition-colors">${tpl[state.lang] || tpl.en}</span>
-                    <i class="fas fa-arrow-right text-gray-600 group-hover:text-cyan-400 transition-colors"></i>
-                `;
-                btn.onclick = () => {
-                    // Deep copy array
-                    state.segments = JSON.parse(JSON.stringify(tpl.data));
-                    updateWheel();
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function renderHistory() {
-            const ul = document.getElementById('history-list');
-            ul.innerHTML = '';
-            if (state.history.length === 0) {
-                ul.innerHTML = `<li class="text-gray-500 text-sm italic text-center mt-10" data-i18n="history_empty">${i18n[state.lang].history_empty}</li>`;
-                return;
-            }
-
-            state.history.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'flex items-center justify-between p-2 border-b border-gray-800/50 text-sm';
-                li.innerHTML = `
-                    <div class="flex items-center gap-2 overflow-hidden">
-                        <div class="w-3 h-3 rounded-full shadow-[0_0_5px_currentColor]" style="background-color: ${item.color}; color: ${item.color}"></div>
-                        <span class="truncate font-semibold">${item.text}</span>
-                    </div>
-                `;
-                ul.appendChild(li);
-            });
-        }
-
-        // Win Modal
-        function showWinnerModal(winner) {
-            playWin();
-            const modal = document.getElementById('result-modal');
-            const text = document.getElementById('winner-text');
-            
-            text.textContent = winner.text;
-            text.style.color = '#fff';
-            text.style.textShadow = `0 0 10px ${winner.color}, 0 0 20px ${winner.color}, 0 0 40px ${winner.color}`;
-            
-            modal.classList.add('active');
-            fireConfetti(winner.color);
-        }
-
-        function closeWinnerModal() {
-            document.getElementById('result-modal').classList.remove('active');
-            stopConfetti();
-        }
-
-        // i18n
-        function setLanguage(langCode) {
-            if (!i18n[langCode]) return;
-            state.lang = langCode;
-            
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[langCode][key]) {
-                    if (el.tagName === 'INPUT' && el.type === 'text') {
-                        el.placeholder = i18n[langCode][key];
-                    } else {
-                        el.textContent = i18n[langCode][key];
-                    }
-                }
-            });
-
-            // Update flags
-            document.querySelectorAll('.lang-flag').forEach(f => {
-                f.classList.toggle('active', f.dataset.lang === langCode);
-            });
-
-            renderTemplates(); // Re-render template names
-            document.getElementById('segment-count').innerHTML = `${state.segments.length}/50 <span data-i18n="items">${i18n[langCode].items}</span>`;
-            saveData();
-        }
-
-        /* ==========================================================================
-           6. DATA PERSISTENCE & SHARING
-           ========================================================================== */
-
-        function saveData() {
-            try {
-                const dataToSave = {
-                    segments: state.segments,
-                    history: state.history,
-                    lang: state.lang
-                };
-                localStorage.setItem('spinlux_data', JSON.stringify(dataToSave));
-            } catch (e) { console.warn("LocalStorage not available"); }
-        }
-
-        function loadData() {
-            // First check URL for shared wheel
-            if (window.location.hash.length > 1) {
-                try {
-                    const encoded = window.location.hash.substring(1);
-                    const decoded = decodeURIComponent(escape(window.atob(encoded)));
-                    const sharedData = JSON.parse(decoded);
-                    if (Array.isArray(sharedData) && sharedData.length > 0) {
-                        state.segments = sharedData;
-                        window.location.hash = ''; // clear hash
-                        updateWheel();
-                        showToast("Roue partagée chargée !");
-                        return; // Done loading
-                    }
-                } catch (e) {
-                    console.error("Failed to parse shared URL", e);
-                }
-            }
-
-            // Fallback to LocalStorage
-            try {
-                const saved = localStorage.getItem('spinlux_data');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    state.segments = parsed.segments || [];
-                    state.history = parsed.history || [];
-                    if (parsed.lang) state.lang = parsed.lang;
-                }
-            } catch (e) { console.warn("Could not read local storage"); }
-
-            // Fallback to Default Template if empty
-            if (state.segments.length === 0) {
-                state.segments = JSON.parse(JSON.stringify(templates.yes_no.data));
-            }
-            
-            updateWheel();
-            renderHistory();
-        }
-
-        function updateURLHash() {
-            // Optional: Auto update hash on every change. 
-            // Disabled to keep URL clean until user explicitly shares.
-        }
-
-        function shareUrl() {
-            try {
-                // Encode array: to JSON -> encodeURI to handle emojis -> btoa
-                const json = JSON.stringify(state.segments);
-                const base64 = window.btoa(unescape(encodeURIComponent(json)));
-                const url = window.location.origin + window.location.pathname + '#' + base64;
-                
-                // Copy to clipboard
-                const el = document.createElement('textarea');
-                el.value = url;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
-                
-                showToast(i18n[state.lang].msg_copied);
-            } catch(e) {
-                console.error("Export failed", e);
-            }
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.remove('opacity-0');
-            setTimeout(() => toast.classList.add('opacity-0'), 3000);
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {});
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-        }
-
-        /* ==========================================================================
-           7. VISUAL EFFECTS (Anti-Gravity Particles 60FPS)
-           ========================================================================== */
-
-        const bgCanvas = document.getElementById('bg-particles');
-        const bgCtx = bgCanvas.getContext('2d');
-        let bgParticles = [];
-
-        function initParticles() {
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-            bgParticles = Array.from({length: 50}, () => createParticle());
-            animateParticles();
-        }
-
-        function createParticle() {
-            return {
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                size: Math.random() * 2 + 0.5,
-                speedY: -(Math.random() * 0.5 + 0.1), // Anti-gravity (moves up)
-                speedX: (Math.random() - 0.5) * 0.5,
-                opacity: Math.random() * 0.5 + 0.1,
-                color: neonColors[Math.floor(Math.random() * neonColors.length)]
-            };
-        }
-
-        function animateParticles() {
-            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-            
-            bgParticles.forEach(p => {
-                p.y += p.speedY;
-                p.x += p.speedX;
-                
-                // Reset if out of bounds (top)
-                if (p.y < -10) {
-                    p.y = bgCanvas.height + 10;
-                    p.x = Math.random() * bgCanvas.width;
-                }
-
-                bgCtx.beginPath();
-                bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                bgCtx.fillStyle = p.color;
-                bgCtx.globalAlpha = p.opacity;
-                // Add tiny glow
-                bgCtx.shadowBlur = 5;
-                bgCtx.shadowColor = p.color;
-                bgCtx.fill();
-            });
-            bgCtx.globalAlpha = 1;
-            bgCtx.shadowBlur = 0;
-
-            requestAnimationFrame(animateParticles);
-        }
-
-        window.addEventListener('resize', () => {
-            bgCanvas.width = window.innerWidth;
-            bgCanvas.height = window.innerHeight;
-        });
-
-        // Confetti Engine
-        const confCanvas = document.getElementById('confetti-canvas');
-        const confCtx = confCanvas.getContext('2d');
-        let confettis = [];
-        let confettiAnimationId = null;
-
-        function fireConfetti(color) {
-            confCanvas.width = window.innerWidth;
-            confCanvas.height = window.innerHeight;
-            confettis = [];
-            
-            for (let i = 0; i < 150; i++) {
-                confettis.push({
-                    x: window.innerWidth / 2,
-                    y: window.innerHeight / 2,
-                    size: Math.random() * 8 + 4,
-                    speedX: (Math.random() - 0.5) * 20,
-                    speedY: (Math.random() - 0.5) * 20 - 5, // Bias upwards initially
-                    rotation: Math.random() * 360,
-                    rotationSpeed: (Math.random() - 0.5) * 10,
-                    color: Math.random() > 0.5 ? color : '#fff',
-                    life: 1
-                });
-            }
-
-            if(confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
-            animateConfetti();
-        }
-
-        function animateConfetti() {
-            confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
-            let active = false;
-
-            confettis.forEach(c => {
-                if (c.life > 0) {
-                    active = true;
-                    // Anti-gravity physics
-                    c.x += c.speedX;
-                    c.y += c.speedY;
-                    c.speedY -= 0.1; // accelerate upwards (anti-gravity!)
-                    c.speedX *= 0.98; // friction
-                    c.rotation += c.rotationSpeed;
-                    c.life -= 0.005; // Fade out
-
-                    confCtx.save();
-                    confCtx.translate(c.x, c.y);
-                    confCtx.rotate(c.rotation * Math.PI / 180);
-                    confCtx.globalAlpha = Math.max(0, c.life);
-                    confCtx.fillStyle = c.color;
-                    confCtx.shadowBlur = 15;
-                    confCtx.shadowColor = c.color;
-                    confCtx.fillRect(-c.size/2, -c.size/2, c.size, c.size);
-                    confCtx.restore();
-                }
-            });
-
-            if (active) {
-                confettiAnimationId = requestAnimationFrame(animateConfetti);
-            }
-        }
-
-        function stopConfetti() {
-            confettis = [];
-            confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
-            if(confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
-        }
-
-        /* ==========================================================================
-           8. BOOTSTRAP
-           ========================================================================== */
-        document.addEventListener('DOMContentLoaded', initApp);
-
-    </script>
+  </aside>
+
+  <!-- ─── CENTER: WHEEL ─── -->
+  <section class="flex-1 flex flex-col items-center justify-center gap-6 py-4 relative">
+    <div class="anti-gravity flex flex-col items-center gap-8">
+      <!-- Wheel -->
+      <div id="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <canvas id="wheel-canvas" width="960" height="960"></canvas>
+        <!-- Center hub -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-dark rounded-full border-4 border-white z-20 shadow-[0_0_18px_#fff] flex items-center justify-center">
+          <div class="w-5 h-5 rounded-full bg-black border border-cyan-400 shadow-[0_0_8px_#00f3ff] animate-pulse"></div>
+        </div>
+      </div>
+
+      <!-- Spin button -->
+      <button id="btn-spin" class="px-10 py-4 rounded-full neon-btn text-xl font-bold w-60">
+        <span data-i18n="btn_spin">LANCER LA ROUE</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ─── RIGHT PANEL ─── -->
+  <aside class="right-panel w-full lg:w-[340px] flex flex-col gap-4 anti-gravity">
+
+    <!-- Stats -->
+    <div class="glass-panel p-5 flex flex-col gap-3">
+      <span class="font-orbitron text-xs tracking-widest text-cyan-400" data-i18n="lbl_stats">STATISTIQUES</span>
+      <div id="stats-list" class="flex flex-col gap-3 max-h-80 overflow-y-auto pr-1">
+        <p class="text-gray-500 text-sm italic text-center py-3" data-i18n="stats_empty">Lance la roue pour voir les stats</p>
+      </div>
+    </div>
+
+    <!-- Wheel title (mobile visible) -->
+    <div class="glass-panel p-4 md:hidden">
+      <label class="text-xs text-gray-400 font-orbitron block mb-2" data-i18n="lbl_title">TITRE DE LA ROUE</label>
+      <input id="wheel-title-m" type="text" maxlength="40" value="Ma Roue"
+        class="w-full rounded-lg px-3 py-2 text-sm font-orbitron">
+    </div>
+
+  </aside>
+</main>
+
+<!-- ═══ RESULT MODAL ═══ -->
+<div id="result-modal">
+  <div class="result-content flex flex-col items-center gap-4 px-6 anti-gravity">
+    <div class="text-5xl">🎯</div>
+    <h2 class="font-orbitron text-gray-300 text-xl tracking-widest" data-i18n="winner_title">RÉSULTAT</h2>
+    <div id="winner-text" class="font-orbitron font-black text-center text-5xl md:text-7xl break-words max-w-xl neon-gold px-4">—</div>
+    <div id="winner-stats" class="text-gray-400 text-sm font-orbitron"></div>
+    <div class="flex gap-4 mt-4">
+      <button id="btn-spin-again" class="neon-btn neon-btn-cyan px-6 py-3 rounded-full text-base">
+        <i class="fas fa-redo mr-2"></i><span data-i18n="btn_again">REJOUER</span>
+      </button>
+      <button id="btn-close-modal" class="px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 font-orbitron text-base tracking-wider transition-colors">
+        <span data-i18n="btn_close">CONTINUER</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   1. DATA: TRANSLATIONS + PRESETS
+══════════════════════════════════════════════════════════════════ */
+const TRANSLATIONS = {
+  fr: {
+    tab_options:'OPTIONS', tab_presets:'MODÈLES', tab_settings:'RÉGLAGES',
+    weights_off:'POIDS OFF', weights_on:'POIDS ON',
+    ph_add:'Nouvelle option…',
+    presets_desc:'Remplacer la roue par un modèle prédéfini.',
+    lbl_duration:'Durée du spin', dur_fast:'Rapide', dur_dramatic:'Dramatique',
+    lbl_remove:'Supprimer le gagnant après spin',
+    btn_share:'PARTAGER LA ROUE',
+    btn_reset_stats:'RÉINITIALISER STATS',
+    lbl_history:'HISTORIQUE', history_empty:'Aucun résultat pour l\'instant.',
+    lbl_stats:'STATISTIQUES', stats_empty:'Lance la roue pour voir les stats.',
+    lbl_title:'TITRE DE LA ROUE',
+    btn_spin:'LANCER LA ROUE', winner_title:'RÉSULTAT !',
+    btn_again:'REJOUER', btn_close:'CONTINUER',
+    msg_min2:'Il faut au moins 2 options.',
+    msg_copied:'Lien copié !',
+    msg_cleared:'Roue vidée.',
+    msg_stats_reset:'Statistiques réinitialisées.',
+    msg_loaded:'Roue partagée chargée !',
+    lbl_times:'fois',
+    lbl_weight:'Poids',
+    lbl_prob:'prob.',
+    preset_yesno:'Oui / Non / Peut-être',
+    preset_days:'Jours de la semaine',
+    preset_nums:'Chiffres 1 à 10',
+    preset_food:'Que manger ce soir ?',
+    preset_weekend:'Que faire ce weekend ?',
+    preset_names:'Tirage au sort de noms',
+    preset_duo:'Décisions pour 2 personnes',
+    preset_colors:'Couleurs',
+    preset_planets:'Planètes du système solaire',
+    preset_movies:'Genre de film',
+  },
+  en: {
+    tab_options:'OPTIONS', tab_presets:'TEMPLATES', tab_settings:'SETTINGS',
+    weights_off:'WEIGHTS OFF', weights_on:'WEIGHTS ON',
+    ph_add:'New option…',
+    presets_desc:'Replace the wheel with a preset template.',
+    lbl_duration:'Spin duration', dur_fast:'Fast', dur_dramatic:'Dramatic',
+    lbl_remove:'Remove winner after spin',
+    btn_share:'SHARE WHEEL',
+    btn_reset_stats:'RESET STATS',
+    lbl_history:'HISTORY', history_empty:'No results yet.',
+    lbl_stats:'STATISTICS', stats_empty:'Spin the wheel to see stats.',
+    lbl_title:'WHEEL TITLE',
+    btn_spin:'SPIN THE WHEEL', winner_title:'RESULT!',
+    btn_again:'SPIN AGAIN', btn_close:'CONTINUE',
+    msg_min2:'You need at least 2 options.',
+    msg_copied:'Link copied!',
+    msg_cleared:'Wheel cleared.',
+    msg_stats_reset:'Stats reset.',
+    msg_loaded:'Shared wheel loaded!',
+    lbl_times:'times',
+    lbl_weight:'Weight',
+    lbl_prob:'prob.',
+    preset_yesno:'Yes / No / Maybe',
+    preset_days:'Days of the week',
+    preset_nums:'Numbers 1 to 10',
+    preset_food:'What to eat tonight?',
+    preset_weekend:'What to do this weekend?',
+    preset_names:'Name draw',
+    preset_duo:'Decisions for 2 people',
+    preset_colors:'Colors',
+    preset_planets:'Solar system planets',
+    preset_movies:'Movie genre',
+  },
+  es: {
+    tab_options:'OPCIONES', tab_presets:'PLANTILLAS', tab_settings:'AJUSTES',
+    weights_off:'PESOS OFF', weights_on:'PESOS ON',
+    ph_add:'Nueva opción…',
+    presets_desc:'Reemplazar la rueda con una plantilla predefinida.',
+    lbl_duration:'Duración del giro', dur_fast:'Rápido', dur_dramatic:'Dramático',
+    lbl_remove:'Eliminar ganador tras girar',
+    btn_share:'COMPARTIR RUEDA',
+    btn_reset_stats:'REINICIAR STATS',
+    lbl_history:'HISTORIAL', history_empty:'Aún no hay resultados.',
+    lbl_stats:'ESTADÍSTICAS', stats_empty:'Gira la rueda para ver stats.',
+    lbl_title:'TÍTULO DE LA RUEDA',
+    btn_spin:'GIRAR LA RULETA', winner_title:'¡RESULTADO!',
+    btn_again:'GIRAR DE NUEVO', btn_close:'CONTINUAR',
+    msg_min2:'Necesitas al menos 2 opciones.',
+    msg_copied:'¡Enlace copiado!',
+    msg_cleared:'Rueda vaciada.',
+    msg_stats_reset:'Estadísticas reiniciadas.',
+    msg_loaded:'¡Rueda compartida cargada!',
+    lbl_times:'veces',
+    lbl_weight:'Peso',
+    lbl_prob:'prob.',
+    preset_yesno:'Sí / No / Quizás',
+    preset_days:'Días de la semana',
+    preset_nums:'Números del 1 al 10',
+    preset_food:'¿Qué comer esta noche?',
+    preset_weekend:'¿Qué hacer este finde?',
+    preset_names:'Sorteo de nombres',
+    preset_duo:'Decisiones para 2 personas',
+    preset_colors:'Colores',
+    preset_planets:'Planetas del sistema solar',
+    preset_movies:'Género de película',
+  }
+};
+
+const NEON = ['#00f3ff','#ff00ff','#39ff14','#ffd700','#b026ff','#ff3131','#1f51ff','#ff6b35','#00ff9f','#ff1493'];
+
+const PRESETS = {
+  yesno: {
+    labelKey: 'preset_yesno',
+    data: {
+      fr:[{text:'OUI',color:NEON[2]},{text:'NON',color:NEON[5]},{text:'PEUT-ÊTRE',color:NEON[3]}],
+      en:[{text:'YES',color:NEON[2]},{text:'NO',color:NEON[5]},{text:'MAYBE',color:NEON[3]}],
+      es:[{text:'SÍ',color:NEON[2]},{text:'NO',color:NEON[5]},{text:'QUIZÁS',color:NEON[3]}],
+    }
+  },
+  days: {
+    labelKey: 'preset_days',
+    data: {
+      fr:['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'],
+      en:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+      es:['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
+    }
+  },
+  nums: {
+    labelKey: 'preset_nums',
+    data: {
+      fr: Array.from({length:10},(_,i)=>({text:`${i+1}`,color:NEON[i%NEON.length]})),
+      en: Array.from({length:10},(_,i)=>({text:`${i+1}`,color:NEON[i%NEON.length]})),
+      es: Array.from({length:10},(_,i)=>({text:`${i+1}`,color:NEON[i%NEON.length]})),
+    }
+  },
+  food: {
+    labelKey: 'preset_food',
+    data: {
+      fr:['🍕 Pizza','🍣 Sushi','🍔 Burger','🥗 Salade','🍜 Ramen','🌮 Tacos','🥘 Curry','🍝 Pâtes'],
+      en:['🍕 Pizza','🍣 Sushi','🍔 Burger','🥗 Salad','🍜 Ramen','🌮 Tacos','🥘 Curry','🍝 Pasta'],
+      es:['🍕 Pizza','🍣 Sushi','🍔 Hamburguesa','🥗 Ensalada','🍜 Ramen','🌮 Tacos','🥘 Curry','🍝 Pasta'],
+    }
+  },
+  weekend: {
+    labelKey: 'preset_weekend',
+    data: {
+      fr:['🎬 Cinéma','🏕️ Camping','🎮 Jeux vidéo','🏃 Sport','🍳 Cuisine','📚 Lecture','🎨 Créativité','🚶 Promenade'],
+      en:['🎬 Cinema','🏕️ Camping','🎮 Gaming','🏃 Sport','🍳 Cooking','📚 Reading','🎨 Crafts','🚶 Walk'],
+      es:['🎬 Cine','🏕️ Acampada','🎮 Videojuegos','🏃 Deporte','🍳 Cocinar','📚 Leer','🎨 Manualidades','🚶 Paseo'],
+    }
+  },
+  names: {
+    labelKey: 'preset_names',
+    data: {
+      fr:['Alice','Bob','Charlie','Diana','Étienne','Farah','Gaël','Hina'],
+      en:['Alice','Bob','Charlie','Diana','Ethan','Fiona','George','Hannah'],
+      es:['Alicia','Beto','Carlos','Diana','Emilio','Fátima','Guillermo','Helena'],
+    }
+  },
+  duo: {
+    labelKey: 'preset_duo',
+    data: {
+      fr:[{text:'👤 Personne 1',color:NEON[0]},{text:'👤 Personne 2',color:NEON[1]}],
+      en:[{text:'👤 Person 1',color:NEON[0]},{text:'👤 Person 2',color:NEON[1]}],
+      es:[{text:'👤 Persona 1',color:NEON[0]},{text:'👤 Persona 2',color:NEON[1]}],
+    }
+  },
+  colors: {
+    labelKey: 'preset_colors',
+    data: {
+      fr:[{text:'🔴 Rouge',color:'#ff3131'},{text:'🟠 Orange',color:'#ff6b35'},{text:'🟡 Jaune',color:'#ffd700'},{text:'🟢 Vert',color:'#39ff14'},{text:'🔵 Bleu',color:'#1f51ff'},{text:'🟣 Violet',color:'#b026ff'},{text:'⚫ Noir',color:'#888'},{text:'⚪ Blanc',color:'#fff'}],
+      en:[{text:'🔴 Red',color:'#ff3131'},{text:'🟠 Orange',color:'#ff6b35'},{text:'🟡 Yellow',color:'#ffd700'},{text:'🟢 Green',color:'#39ff14'},{text:'🔵 Blue',color:'#1f51ff'},{text:'🟣 Purple',color:'#b026ff'},{text:'⚫ Black',color:'#888'},{text:'⚪ White',color:'#fff'}],
+      es:[{text:'🔴 Rojo',color:'#ff3131'},{text:'🟠 Naranja',color:'#ff6b35'},{text:'🟡 Amarillo',color:'#ffd700'},{text:'🟢 Verde',color:'#39ff14'},{text:'🔵 Azul',color:'#1f51ff'},{text:'🟣 Morado',color:'#b026ff'},{text:'⚫ Negro',color:'#888'},{text:'⚪ Blanco',color:'#fff'}],
+    }
+  },
+  planets: {
+    labelKey: 'preset_planets',
+    data: {
+      fr:['☿ Mercure','♀ Vénus','🌍 Terre','♂ Mars','♃ Jupiter','♄ Saturne','♅ Uranus','♆ Neptune'],
+      en:['☿ Mercury','♀ Venus','🌍 Earth','♂ Mars','♃ Jupiter','♄ Saturn','♅ Uranus','♆ Neptune'],
+      es:['☿ Mercurio','♀ Venus','🌍 Tierra','♂ Marte','♃ Júpiter','♄ Saturno','♅ Urano','♆ Neptuno'],
+    }
+  },
+  movies: {
+    labelKey: 'preset_movies',
+    data: {
+      fr:['🎬 Action','😂 Comédie','😱 Horreur','💕 Romance','🔍 Thriller','🌌 SF','🧙 Fantaisie','📜 Drame'],
+      en:['🎬 Action','😂 Comedy','😱 Horror','💕 Romance','🔍 Thriller','🌌 Sci-Fi','🧙 Fantasy','📜 Drama'],
+      es:['🎬 Acción','😂 Comedia','😱 Terror','💕 Romance','🔍 Thriller','🌌 Ciencia Ficción','🧙 Fantasía','📜 Drama'],
+    }
+  }
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   2. APP STATE
+══════════════════════════════════════════════════════════════════ */
+const state = {
+  lang:           'fr',
+  segments:       [],       // {text, color, weight}
+  stats:          {},       // {text: count}
+  history:        [],
+  currentRotation:0,
+  isSpinning:     false,
+  weightsEnabled: false,
+  removeWinner:   false,
+  spinDuration:   6,
+  currentPreset:  null,     // key of active preset
+  soundEnabled:   true,
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   3. DOM REFS
+══════════════════════════════════════════════════════════════════ */
+const canvas    = document.getElementById('wheel-canvas');
+const ctx       = canvas.getContext('2d');
+const segList   = document.getElementById('seg-list');
+const spinBtn   = document.getElementById('btn-spin');
+const wheelWrap = document.getElementById('wheel-wrap');
+const modal     = document.getElementById('result-modal');
+
+/* ══════════════════════════════════════════════════════════════════
+   4. AUDIO
+══════════════════════════════════════════════════════════════════ */
+let audioCtx;
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playTick(speed = 1) {
+  if (!state.soundEnabled) return;
+  initAudio();
+  const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(600 + speed * 200, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.04);
+  g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+}
+function playWin() {
+  if (!state.soundEnabled) return;
+  initAudio();
+  const now = audioCtx.currentTime;
+  [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+    const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.18, now + 0.1 + i * 0.06);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 2.5);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   5. WHEEL RENDERING
+══════════════════════════════════════════════════════════════════ */
+function drawWheel() {
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2, R = W / 2 - 12;
+  ctx.clearRect(0, 0, W, H);
+
+  const segs = state.segments;
+  if (!segs.length) {
+    ctx.fillStyle = 'rgba(0,243,255,0.08)';
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.font = 'bold 36px Orbitron,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('SPINLUX', cx, cy);
+    return;
+  }
+
+  // Build weighted slots
+  const totalWeight = segs.reduce((s, seg) => s + (seg.weight || 1), 0);
+  let startAngle = -Math.PI / 2;
+
+  segs.forEach((seg, idx) => {
+    const w = seg.weight || 1;
+    const sliceAngle = (w / totalWeight) * Math.PI * 2;
+    const endAngle = startAngle + sliceAngle;
+    const midAngle = startAngle + sliceAngle / 2;
+
+    // Slice
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, startAngle, endAngle);
+    ctx.closePath();
+
+    const r = parseInt(seg.color.slice(1,3),16);
+    const g = parseInt(seg.color.slice(3,5),16);
+    const b = parseInt(seg.color.slice(5,7),16);
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+    grad.addColorStop(0,   `rgba(${r},${g},${b},0.15)`);
+    grad.addColorStop(0.75, seg.color);
+    grad.addColorStop(1,   `rgba(${r},${g},${b},0.7)`);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = '#05050f'; ctx.stroke();
+
+    // Text
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(midAngle);
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    // Dynamic font size based on number of segments
+    const baseFontSize = Math.max(22, Math.min(44, 44 - segs.length * 1.4));
+    ctx.font = `bold ${baseFontSize}px Orbitron,sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 8;
+
+    let txt = seg.text;
+    const maxLen = segs.length > 12 ? 9 : segs.length > 6 ? 13 : 18;
+    if (txt.length > maxLen) txt = txt.slice(0, maxLen - 2) + '…';
+    ctx.fillText(txt, R - 30, 0);
+    ctx.restore();
+
+    startAngle = endAngle;
+  });
+
+  // Center cap
+  ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2);
+  ctx.fillStyle = '#030308'; ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.stroke();
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   6. SPIN PHYSICS
+══════════════════════════════════════════════════════════════════ */
+function easeOutQuint(t) { return 1 - Math.pow(1 - t, 5); }
+
+function spinWheel() {
+  if (state.isSpinning) return;
+  if (state.segments.length < 2) { showToast(t('msg_min2')); return; }
+
+  initAudio();
+  state.isSpinning = true;
+  spinBtn.disabled = true;
+  spinBtn.style.opacity = '0.5';
+  wheelWrap.parentElement.classList.remove('anti-gravity');
+
+  const duration = state.spinDuration * 1000;
+  const extraSpins = 8 + Math.random() * 6;
+
+  // Pre-determine winner based on weights
+  const winner = pickWeightedWinner();
+  const winnerIndex = state.segments.indexOf(winner);
+
+  // Calculate how much the wheel must rotate so winner ends under pointer
+  const totalWeight = state.segments.reduce((s,seg) => s + (seg.weight||1), 0);
+  let angleToWinner = 0;
+  for (let i = 0; i < winnerIndex; i++) {
+    angleToWinner += ((state.segments[i].weight||1) / totalWeight) * 360;
+  }
+  // Center of winner slice
+  const winnerWidth = ((winner.weight||1) / totalWeight) * 360;
+  angleToWinner += winnerWidth / 2;
+
+  // The pointer is at top (0 deg in our draw = -90° in math, but we handle via -PI/2 offset).
+  // We want: (currentRotation + targetSpin) % 360 such that angleToWinner lands at top.
+  const normalized = state.currentRotation % 360;
+  const targetRemainder = (360 - angleToWinner) % 360;
+  let delta = targetRemainder - normalized;
+  if (delta < 0) delta += 360;
+  const targetRotation = state.currentRotation + (extraSpins * 360) + delta;
+
+  const startRotation = state.currentRotation;
+  let startTime = null;
+  let lastIndex = -1;
+
+  function animate(ts) {
+    if (!startTime) startTime = ts;
+    const progress = Math.min((ts - startTime) / duration, 1);
+    const eased = easeOutQuint(progress);
+    state.currentRotation = startRotation + eased * (targetRotation - startRotation);
+    canvas.style.transform = `rotate(${state.currentRotation}deg)`;
+
+    // Tick detection
+    const speed = 1 - progress;
+    const segs = state.segments;
+    const tw = segs.reduce((s,g)=>s+(g.weight||1),0);
+    let acc = 0, idx = -1;
+    const rot = ((state.currentRotation % 360) + 360) % 360;
+    for (let i = 0; i < segs.length; i++) {
+      acc += (segs[i].weight||1) / tw * 360;
+      if (rot < acc) { idx = i; break; }
+    }
+    if (idx !== lastIndex && lastIndex !== -1) playTick(speed);
+    lastIndex = idx;
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      finishSpin(winner);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function pickWeightedWinner() {
+  const segs = state.segments;
+  const total = segs.reduce((s,g) => s + (g.weight||1), 0);
+  let r = Math.random() * total;
+  for (const seg of segs) { r -= (seg.weight||1); if (r <= 0) return seg; }
+  return segs[segs.length - 1];
+}
+
+function finishSpin(winner) {
+  state.isSpinning = false;
+  spinBtn.disabled = false;
+  spinBtn.style.opacity = '1';
+  wheelWrap.parentElement.classList.add('anti-gravity');
+
+  // Update stats
+  const key = winner.text;
+  state.stats[key] = (state.stats[key] || 0) + 1;
+
+  // Update history
+  state.history.unshift({ text: winner.text, color: winner.color, time: new Date() });
+  if (state.history.length > 20) state.history.pop();
+
+  // Remove winner if enabled
+  if (state.removeWinner && state.segments.length > 1) {
+    state.segments = state.segments.filter(s => s !== winner);
+    drawWheel();
+    renderSegList();
+  }
+
+  saveData();
+  renderHistory();
+  renderStats();
+  showWinnerModal(winner);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   7. UI RENDERING
+══════════════════════════════════════════════════════════════════ */
+function renderSegList() {
+  segList.innerHTML = '';
+  state.segments.forEach((seg, idx) => {
+    const div = document.createElement('div');
+    div.className = 'seg-item';
+    div.draggable = true;
+    div.dataset.index = idx;
+
+    const dot = `<div class="w-5 h-5 rounded-full flex-shrink-0 cursor-pointer" style="background:${seg.color};box-shadow:0 0 8px ${seg.color}" title="Changer couleur" onclick="changeColor(${idx})"></div>`;
+
+    const textSpan = `<span class="flex-grow text-sm font-semibold truncate cursor-pointer" ondblclick="editSegText(this,${idx})" title="Double-clic pour éditer">${escHtml(seg.text)}</span>`;
+
+    const weightSpan = state.weightsEnabled
+      ? `<input type="number" min="1" max="100" value="${seg.weight||1}" class="w-12 text-center text-xs rounded px-1 py-0.5 font-orbitron" style="background:rgba(176,38,255,.15);border:1px solid rgba(176,38,255,.4);color:rgba(176,38,255,.9)" onchange="updateWeight(${idx},this.value)" title="${t('lbl_weight')}">`
+      : '';
+
+    const del = `<button class="text-gray-600 hover:text-red-400 transition-colors text-xs flex-shrink-0 ml-1" onclick="removeSeg(${idx})"><i class="fas fa-times"></i></button>`;
+
+    div.innerHTML = `
+      <span class="text-gray-600 text-xs cursor-grab mr-1">⠿</span>
+      ${dot}
+      ${textSpan}
+      ${weightSpan}
+      ${del}`;
+
+    div.addEventListener('dragstart', dndStart);
+    div.addEventListener('dragover', dndOver);
+    div.addEventListener('drop', dndDrop);
+    div.addEventListener('dragend', dndEnd);
+    segList.appendChild(div);
+  });
+
+  document.getElementById('seg-count').textContent = `${state.segments.length}/50`;
+}
+
+function renderPresets() {
+  const list = document.getElementById('presets-list');
+  list.innerHTML = '';
+  Object.keys(PRESETS).forEach(key => {
+    const preset = PRESETS[key];
+    const label = t(preset.labelKey);
+    const card = document.createElement('div');
+    card.className = 'preset-card';
+    const isActive = state.currentPreset === key;
+    card.innerHTML = `
+      <span class="text-sm font-semibold ${isActive ? 'text-cyan-400' : 'text-gray-200'}">${escHtml(label)}</span>
+      <i class="fas fa-arrow-right text-xs ${isActive ? 'text-cyan-400' : 'text-gray-600'}"></i>`;
+    card.onclick = () => loadPreset(key);
+    list.appendChild(card);
+  });
+}
+
+function loadPreset(key) {
+  const preset = PRESETS[key];
+  const raw = preset.data[state.lang] || preset.data.fr;
+  state.segments = raw.map((item, i) => {
+    if (typeof item === 'string') return { text: item, color: NEON[i % NEON.length], weight: 1 };
+    return { text: item.text, color: item.color || NEON[i % NEON.length], weight: item.weight || 1 };
+  });
+  state.currentPreset = key;
+  state.stats = {};
+  updateAll();
+  renderPresets();
+}
+
+function renderHistory() {
+  const ul = document.getElementById('history-list');
+  ul.innerHTML = '';
+  if (!state.history.length) {
+    ul.innerHTML = `<li class="text-gray-500 text-sm italic text-center py-3">${t('history_empty')}</li>`;
+    return;
+  }
+  state.history.slice(0, 10).forEach((item, i) => {
+    const li = document.createElement('li');
+    li.className = 'flex items-center gap-2 text-sm py-1 border-b border-white/04';
+    li.innerHTML = `
+      <span class="w-5 h-5 rounded-full flex-shrink-0 inline-block" style="background:${item.color};box-shadow:0 0 5px ${item.color}"></span>
+      <span class="truncate flex-grow font-semibold">${escHtml(item.text)}</span>
+      <span class="text-gray-600 text-xs flex-shrink-0">#${i+1}</span>`;
+    ul.appendChild(li);
+  });
+}
+
+function renderStats() {
+  const list = document.getElementById('stats-list');
+  const keys = Object.keys(state.stats);
+  if (!keys.length) {
+    list.innerHTML = `<p class="text-gray-500 text-sm italic text-center py-3">${t('stats_empty')}</p>`;
+    return;
+  }
+  const total = Object.values(state.stats).reduce((a,b)=>a+b,0);
+  list.innerHTML = '';
+  // Sort by count desc
+  keys.sort((a,b) => state.stats[b] - state.stats[a]).forEach(key => {
+    const count = state.stats[key];
+    const pct = Math.round(count / total * 100);
+    const seg = state.segments.find(s => s.text === key);
+    const color = seg ? seg.color : '#00f3ff';
+    const div = document.createElement('div');
+    div.className = 'flex flex-col gap-1';
+    div.innerHTML = `
+      <div class="flex justify-between items-center text-xs">
+        <span class="truncate font-semibold text-gray-200 max-w-[65%]">${escHtml(key)}</span>
+        <span class="font-orbitron text-xs" style="color:${color}">${count} ${t('lbl_times')} · ${pct}%</span>
+      </div>
+      <div class="h-1.5 rounded-full bg-white/05 overflow-hidden">
+        <div class="stat-bar-fill rounded-full" style="width:${pct}%;--c1:${color};--c2:${color}aa"></div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   8. SEGMENT CRUD
+══════════════════════════════════════════════════════════════════ */
+function addSeg() {
+  if (state.segments.length >= 50) return;
+  const txtEl = document.getElementById('add-text');
+  const colEl = document.getElementById('add-color');
+  const wEl   = document.getElementById('add-weight');
+  const text  = txtEl.value.trim();
+  if (!text) return;
+  state.segments.push({ text, color: colEl.value, weight: parseInt(wEl?.value)||1 });
+  txtEl.value = '';
+  colEl.value = NEON[state.segments.length % NEON.length];
+  updateAll();
+}
+function removeSeg(idx) {
+  state.segments.splice(idx, 1);
+  updateAll();
+}
+function updateWeight(idx, val) {
+  state.segments[idx].weight = Math.max(1, Math.min(100, parseInt(val)||1));
+  drawWheel();
+  saveData();
+}
+function changeColor(idx) {
+  const input = document.createElement('input');
+  input.type = 'color';
+  input.value = state.segments[idx].color;
+  input.addEventListener('input', e => {
+    state.segments[idx].color = e.target.value;
+    drawWheel(); renderSegList(); saveData();
+  });
+  input.click();
+}
+function editSegText(span, idx) {
+  const old = state.segments[idx].text;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = old;
+  input.className = 'flex-grow text-sm font-semibold bg-transparent border-b border-cyan-400/50 outline-none text-white w-full';
+  span.replaceWith(input);
+  input.focus();
+  input.select();
+  const commit = () => {
+    const newVal = input.value.trim() || old;
+    state.segments[idx].text = newVal;
+    // Update stats key
+    if (old !== newVal && state.stats[old] !== undefined) {
+      state.stats[newVal] = (state.stats[newVal]||0) + state.stats[old];
+      delete state.stats[old];
+    }
+    updateAll();
+  };
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => { if (e.key==='Enter') input.blur(); if (e.key==='Escape') { input.value=old; input.blur(); } });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   9. DND
+══════════════════════════════════════════════════════════════════ */
+let dragSrc = null;
+function dndStart(e) { dragSrc=this; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',this.dataset.index); this.classList.add('dragging'); }
+function dndOver(e)  { e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+function dndDrop(e)  {
+  e.stopPropagation();
+  if (dragSrc!==this) {
+    const from=parseInt(e.dataTransfer.getData('text/plain')), to=parseInt(this.dataset.index);
+    const item=state.segments.splice(from,1)[0];
+    state.segments.splice(to,0,item);
+    updateAll();
+  }
+}
+function dndEnd()    { this.classList.remove('dragging'); }
+
+/* ══════════════════════════════════════════════════════════════════
+   10. WINNER MODAL
+══════════════════════════════════════════════════════════════════ */
+function showWinnerModal(winner) {
+  playWin();
+  const el = document.getElementById('winner-text');
+  el.textContent = winner.text;
+  el.style.textShadow = `0 0 10px ${winner.color},0 0 22px ${winner.color},0 0 46px ${winner.color}`;
+  const count = state.stats[winner.text]||0;
+  document.getElementById('winner-stats').textContent = `${count} ${t('lbl_times')} au total`;
+  modal.classList.add('active');
+  fireConfetti(winner.color);
+}
+function closeModal() {
+  modal.classList.remove('active');
+  stopConfetti();
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   11. I18N
+══════════════════════════════════════════════════════════════════ */
+function t(key) { return (TRANSLATIONS[state.lang]||TRANSLATIONS.fr)[key] || key; }
+
+function changeLanguage(lang) {
+  if (!TRANSLATIONS[lang]) return;
+  state.lang = lang;
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (el.tagName==='INPUT' && el.type==='text') el.placeholder = val;
+    else el.textContent = val;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+
+  // Update flags
+  document.querySelectorAll('.lang-flag').forEach(f => f.classList.toggle('active', f.dataset.lang===lang));
+
+  // Reload preset if active
+  if (state.currentPreset) loadPreset(state.currentPreset);
+
+  // Update weights button text
+  document.getElementById('btn-weights').textContent = state.weightsEnabled ? t('weights_on') : t('weights_off');
+
+  renderPresets();
+  renderHistory();
+  renderStats();
+  saveData();
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   12. PERSISTENCE
+══════════════════════════════════════════════════════════════════ */
+function saveData() {
+  try {
+    localStorage.setItem('spinlux_v2', JSON.stringify({
+      segments: state.segments,
+      history:  state.history,
+      stats:    state.stats,
+      lang:     state.lang,
+      spinDuration: state.spinDuration,
+      weightsEnabled: state.weightsEnabled,
+      removeWinner: state.removeWinner,
+      title: document.getElementById('wheel-title').value,
+    }));
+  } catch(e) {}
+}
+function loadData() {
+  // URL hash share
+  if (location.hash.length > 1) {
+    try {
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1)))));
+      if (Array.isArray(decoded) && decoded.length) {
+        state.segments = decoded;
+        location.hash = '';
+        updateAll();
+        showToast(t('msg_loaded'));
+        return;
+      }
+    } catch(e) {}
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem('spinlux_v2'));
+    if (saved) {
+      state.segments     = saved.segments||[];
+      state.history      = saved.history||[];
+      state.stats        = saved.stats||{};
+      state.spinDuration = saved.spinDuration||6;
+      state.weightsEnabled = saved.weightsEnabled||false;
+      state.removeWinner = saved.removeWinner||false;
+      if (saved.lang) state.lang = saved.lang;
+      if (saved.title) {
+        document.getElementById('wheel-title').value = saved.title;
+        const m = document.getElementById('wheel-title-m');
+        if (m) m.value = saved.title;
+      }
+    }
+  } catch(e) {}
+
+  if (!state.segments.length) loadPreset('yesno');
+  else updateAll();
+  renderHistory();
+  renderStats();
+
+  // Restore duration slider
+  const slider = document.getElementById('spin-duration');
+  slider.value = state.spinDuration;
+  document.getElementById('spin-duration-val').textContent = state.spinDuration+'s';
+
+  // Restore weights
+  if (state.weightsEnabled) {
+    document.getElementById('add-weight-wrap').classList.remove('hidden');
+    document.getElementById('btn-weights').textContent = t('weights_on');
+  }
+
+  // Restore remove winner toggle
+  updateRemoveWinnerBtn();
+}
+
+function shareWheel() {
+  try {
+    const json = JSON.stringify(state.segments);
+    const b64  = btoa(unescape(encodeURIComponent(json)));
+    const url  = location.origin + location.pathname + '#' + b64;
+    navigator.clipboard.writeText(url).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    showToast(t('msg_copied'));
+  } catch(e) {}
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   13. HELPERS
+══════════════════════════════════════════════════════════════════ */
+function updateAll() {
+  drawWheel();
+  renderSegList();
+  renderStats();
+  saveData();
+}
+
+function showToast(msg, duration=3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function updateRemoveWinnerBtn() {
+  const btn = document.getElementById('btn-remove-winner');
+  const thumb = btn.querySelector('span');
+  if (state.removeWinner) {
+    btn.style.background = 'rgba(0,243,255,.25)';
+    btn.style.borderColor = 'rgba(0,243,255,.5)';
+    thumb.style.transform = 'translateX(20px)';
+  } else {
+    btn.style.background = 'rgba(255,255,255,.08)';
+    btn.style.borderColor = 'rgba(255,255,255,.2)';
+    thumb.style.transform = 'translateX(0)';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   14. PARTICLES BACKGROUND
+══════════════════════════════════════════════════════════════════ */
+const bgCvs = document.getElementById('bg-canvas');
+const bgCtx = bgCvs.getContext('2d');
+let particles = [];
+
+function initParticles() {
+  bgCvs.width  = window.innerWidth;
+  bgCvs.height = window.innerHeight;
+  particles = Array.from({length:55}, () => mkParticle());
+  animParticles();
+}
+function mkParticle() {
+  return {
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 1.8 + 0.4,
+    vy: -(Math.random() * 0.45 + 0.1),
+    vx: (Math.random() - 0.5) * 0.35,
+    a:  Math.random() * 0.45 + 0.08,
+    c:  NEON[Math.floor(Math.random()*NEON.length)]
+  };
+}
+function animParticles() {
+  bgCtx.clearRect(0,0,bgCvs.width,bgCvs.height);
+  particles.forEach(p => {
+    p.y += p.vy; p.x += p.vx;
+    if (p.y < -5) { p.y = bgCvs.height+5; p.x = Math.random()*bgCvs.width; }
+    bgCtx.beginPath(); bgCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    bgCtx.fillStyle = p.c; bgCtx.globalAlpha = p.a;
+    bgCtx.shadowBlur = 4; bgCtx.shadowColor = p.c;
+    bgCtx.fill();
+  });
+  bgCtx.globalAlpha=1; bgCtx.shadowBlur=0;
+  requestAnimationFrame(animParticles);
+}
+window.addEventListener('resize', () => {
+  bgCvs.width  = window.innerWidth;
+  bgCvs.height = window.innerHeight;
+});
+
+/* ══════════════════════════════════════════════════════════════════
+   15. CONFETTI
+══════════════════════════════════════════════════════════════════ */
+const cCvs = document.getElementById('conf-canvas');
+const cCtx = cCvs.getContext('2d');
+let confettiParts = [], confId = null;
+
+function fireConfetti(color) {
+  cCvs.width = window.innerWidth; cCvs.height = window.innerHeight;
+  cCvs.style.display='block';
+  confettiParts = [];
+  for (let i=0; i<180; i++) {
+    const angle = Math.random()*Math.PI*2;
+    const speed = 4 + Math.random()*16;
+    confettiParts.push({
+      x: window.innerWidth/2, y: window.innerHeight/2,
+      vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 4,
+      size: Math.random()*9+4,
+      rot: Math.random()*360, rotV: (Math.random()-0.5)*12,
+      color: Math.random()>.4 ? color : '#fff',
+      life: 1
+    });
+  }
+  if (confId) cancelAnimationFrame(confId);
+  animConfetti();
+}
+function animConfetti() {
+  cCtx.clearRect(0,0,cCvs.width,cCvs.height);
+  let alive = false;
+  confettiParts.forEach(c => {
+    if (c.life > 0) {
+      alive = true;
+      c.x+=c.vx; c.y+=c.vy; c.vy+=0.25; c.vx*=0.97;
+      c.rot+=c.rotV; c.life-=0.006;
+      cCtx.save();
+      cCtx.translate(c.x,c.y); cCtx.rotate(c.rot*Math.PI/180);
+      cCtx.globalAlpha=Math.max(0,c.life);
+      cCtx.fillStyle=c.color;
+      cCtx.shadowBlur=10; cCtx.shadowColor=c.color;
+      cCtx.fillRect(-c.size/2,-c.size/2,c.size,c.size);
+      cCtx.restore();
+    }
+  });
+  if (alive) confId = requestAnimationFrame(animConfetti);
+  else cCvs.style.display='none';
+}
+function stopConfetti() {
+  confettiParts=[];
+  cCtx.clearRect(0,0,cCvs.width,cCvs.height);
+  cCvs.style.display='none';
+  if (confId) cancelAnimationFrame(confId);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   16. INIT & EVENT LISTENERS
+══════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Spin
+  spinBtn.addEventListener('click', spinWheel);
+  wheelWrap.addEventListener('click', spinWheel);
+
+  // Add form
+  document.getElementById('add-form').addEventListener('submit', e => { e.preventDefault(); addSeg(); });
+
+  // Clear
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    state.segments=[]; state.currentPreset=null; updateAll();
+    showToast(t('msg_cleared'));
+  });
+
+  // Shuffle
+  document.getElementById('btn-shuffle').addEventListener('click', () => {
+    state.segments.sort(()=>Math.random()-.5); updateAll();
+  });
+
+  // Weights toggle
+  document.getElementById('btn-weights').addEventListener('click', () => {
+    state.weightsEnabled = !state.weightsEnabled;
+    document.getElementById('btn-weights').textContent = state.weightsEnabled ? t('weights_on') : t('weights_off');
+    document.getElementById('add-weight-wrap').classList.toggle('hidden', !state.weightsEnabled);
+    renderSegList();
+    saveData();
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      btn.classList.add('active');
+      document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
+      if (btn.dataset.tab === 'presets') renderPresets();
+    });
+  });
+
+  // Language
+  document.querySelectorAll('.lang-flag').forEach(f => {
+    f.addEventListener('click', e => changeLanguage(e.currentTarget.dataset.lang));
+  });
+
+  // Duration slider
+  const durSlider = document.getElementById('spin-duration');
+  durSlider.addEventListener('input', e => {
+    state.spinDuration = parseInt(e.target.value);
+    document.getElementById('spin-duration-val').textContent = state.spinDuration+'s';
+    saveData();
+  });
+
+  // Remove winner toggle
+  document.getElementById('btn-remove-winner').addEventListener('click', () => {
+    state.removeWinner = !state.removeWinner;
+    updateRemoveWinnerBtn();
+    saveData();
+  });
+
+  // Share
+  document.getElementById('btn-share').addEventListener('click', shareWheel);
+
+  // Reset stats
+  document.getElementById('btn-reset-stats').addEventListener('click', () => {
+    state.stats={}; renderStats(); saveData();
+    showToast(t('msg_stats_reset'));
+  });
+
+  // Clear history
+  document.getElementById('btn-clear-history').addEventListener('click', () => {
+    state.history=[]; renderHistory(); saveData();
+  });
+
+  // Audio
+  document.getElementById('btn-audio').addEventListener('click', e => {
+    state.soundEnabled = !state.soundEnabled;
+    e.currentTarget.innerHTML = state.soundEnabled
+      ? '<i class="fas fa-volume-up"></i>'
+      : '<i class="fas fa-volume-mute" style="color:#666"></i>';
+  });
+
+  // Fullscreen
+  document.getElementById('btn-fs').addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+    else document.exitFullscreen && document.exitFullscreen();
+  });
+
+  // Modal buttons
+  document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+  document.getElementById('btn-spin-again').addEventListener('click', () => { closeModal(); setTimeout(spinWheel, 400); });
+
+  // Sync wheel title inputs
+  document.getElementById('wheel-title').addEventListener('input', e => {
+    const m = document.getElementById('wheel-title-m');
+    if (m) m.value = e.target.value;
+    saveData();
+  });
+  const wheelTitleM = document.getElementById('wheel-title-m');
+  if (wheelTitleM) wheelTitleM.addEventListener('input', e => {
+    document.getElementById('wheel-title').value = e.target.value;
+    saveData();
+  });
+
+  // Close modal on backdrop
+  modal.addEventListener('click', e => { if (e.target===modal) closeModal(); });
+
+  // Init color picker
+  document.getElementById('add-color').value = NEON[0];
+
+  // Load & start
+  loadData();
+  changeLanguage(state.lang);
+  initParticles();
+});
+</script>
 </body>
 </html>
